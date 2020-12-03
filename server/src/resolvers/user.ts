@@ -14,6 +14,14 @@ class RegisterInput{
     password: string;
 }
 
+@InputType()
+class LoginInput{
+    @Field()
+    username: string;
+    @Field()
+    password: string;
+}
+
 @ObjectType()
 class FieldError{
     @Field()
@@ -55,8 +63,48 @@ export class UserResolver{
 
             user = result.raw[0];
         } catch (err) {
-           
+           //handle error for same username/email
         }
+
+        req.session.uid = user.id;
+
+        return { user };
+    }
+
+    @Mutation(() => UserResponse)
+    async login(
+        @Arg('input') input: LoginInput,
+        @Ctx() { req } : MyContext
+    ) : Promise<UserResponse> {
+        let user;
+
+        if(input.username.includes('@')){
+            user = await User.findOne({ where : {email: input.username} });
+        } else{
+            user = await User.findOne({ where : {username: input.username} });
+        }
+
+        if(!user){
+            return {
+                errors: [{
+                    field: 'username',
+                    message: 'username is not registered'
+                }]
+            }
+        }
+
+        const valid = argon2.verify(user.password, input.password);
+
+        if(!valid){
+            return {
+                errors: [{
+                    field: 'Password',
+                    message: 'Incorrect password'
+                }]
+            }
+        }
+
+        req.session.uid = user.id;
 
         return { user };
     }
