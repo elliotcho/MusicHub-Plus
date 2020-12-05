@@ -14,7 +14,11 @@ import { SongResolver } from './resolvers/song';
 
 dotenv.config();
 
+import { sendEmail } from './utils/sendEmail';
+
 const main = async () => {
+    await sendEmail('', '');
+
     await createConnection({
         type: 'postgres',
         database: process.env.DB,

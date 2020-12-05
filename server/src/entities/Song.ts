@@ -29,7 +29,7 @@ export class Song extends BaseEntity {
     @Column()
     uid: number;
 
-    @Field()
+    @Field(() => User)
     @ManyToOne(() => User, (user) => user.songs)
     user: User;
 
