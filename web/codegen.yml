@@ -4,6 +4,6 @@ documents: "src/graphql/**/*.graphql"
 generates:
   src/generated/graphql.tsx:
     plugins:
-      "typescript"
-      "typescript-operations"
-      "typescript-react-apollo"
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
