@@ -11,6 +11,7 @@ import { User } from './entities/User';
 import { Song } from './entities/Song';
 import { UserResolver } from './resolvers/user';
 import { SongResolver } from './resolvers/song';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -25,10 +26,19 @@ const main = async () => {
         entities: [User, Song]
     });
 
+    //await User.delete({})
+
     const app = express();
 
     const RedisStore = connectRedis(session);
     const redis = new Redis();
+
+    app.use(
+        cors({
+            origin: 'http://localhost:3000',
+            credentials: true
+        })
+    );
 
     app.use(
         session({
@@ -58,7 +68,8 @@ const main = async () => {
     });
 
     apolloServer.applyMiddleware({
-        app
+        app,
+        cors: false
     });
 
     app.listen(4000, () => {
