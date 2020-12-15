@@ -1,6 +1,6 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import connectRedis from 'connect-redis';
-import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
 import Redis from 'ioredis';
@@ -13,20 +13,14 @@ import { UserResolver } from './resolvers/user';
 import { SongResolver } from './resolvers/song';
 import cors from 'cors';
 
-dotenv.config();
-
 const main = async () => {
     await createConnection({
         type: 'postgres',
-        database: process.env.DB,
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
+        url: process.env.DB_URL,
         logging: true,
         synchronize: true,
         entities: [User, Song]
     });
-
-    //await User.delete({})
 
     const app = express();
 
