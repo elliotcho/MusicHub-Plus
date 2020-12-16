@@ -1,6 +1,6 @@
 import argon2 from 'argon2';
 import { User } from '../entities/User';
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Resolver } from 'type-graphql';
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import { MyContext } from '../types';
 import { v4 } from 'uuid';
@@ -42,6 +42,19 @@ class UserResponse{
 
 @Resolver()
 export class UserResolver{
+    @Query(() => User, { nullable: true })
+    async me(
+        @Ctx() { req } : MyContext
+    ) : Promise<User | null>{
+        if(!req.session.uid){
+            return null;
+        }
+
+        const user = await User.findOne(req.session.uid);
+
+        return user? user: null;
+    }
+
     @Mutation(() => UserResponse)
     async changePassword(
         @Arg('token') token: string,

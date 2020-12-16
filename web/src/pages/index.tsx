@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
+import { withApollo } from '../utils/withApollo';
 
 const Index = () => (
   <div>
@@ -7,4 +8,4 @@ const Index = () => (
   </div> 
 );
 
-export default Index;
+export default withApollo({ ssr: true })(Index);

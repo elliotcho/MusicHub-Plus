@@ -1,6 +1,7 @@
 import { createWithApollo } from './createWithApollo';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { NextPageContext } from 'next';
+import { isServer } from './isServer';
 
 const client = (ctx: NextPageContext) => (
     new ApolloClient({
@@ -9,7 +10,7 @@ const client = (ctx: NextPageContext) => (
         cache: new InMemoryCache,
         headers: {
             cookie: 
-                (typeof window === 'undefined'
+                (isServer() 
                     ? ctx?.req?.headers?.cookie :
                     undefined
                 )
