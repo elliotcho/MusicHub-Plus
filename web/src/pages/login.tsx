@@ -1,18 +1,17 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import { withApollo } from '../utils/withApollo';
-import { Box, Button, Flex, Heading, Input } from '@chakra-ui/react';
+import { Box, Button, Heading, Input } from '@chakra-ui/react';
 import { useLoginMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
+import ConcertWrapper from '../components/ConcertWrapper';
 
 const Login: React.FC<{}> = ({}) => {
     const router = useRouter();
     const [login] = useLoginMutation();
 
-    const imgURL = "url('/concert.jpg')";
-
     return (
-       <Flex bgImage={imgURL} bgPosition='center' bgRepeat='no-repeat' h='100vh' align='center' >
+        <ConcertWrapper>
             <Formik
                 initialValues={{username: '', password: ''}}
                 onSubmit={async (values) => {
@@ -59,7 +58,7 @@ const Login: React.FC<{}> = ({}) => {
                     </Box>
                 )}
             </Formik>      
-        </Flex>
+        </ConcertWrapper>
     );
 }
 

@@ -45,14 +45,12 @@ export class UserResolver{
     @Query(() => User, { nullable: true })
     async me(
         @Ctx() { req } : MyContext
-    ) : Promise<User | null>{
+    ) : Promise<User | undefined>{
         if(!req.session.uid){
-            return null;
+            return undefined;
         }
 
-        const user = await User.findOne(req.session.uid);
-
-        return user? user: null;
+        return User.findOne(req.session.uid);
     }
 
     @Mutation(() => UserResponse)

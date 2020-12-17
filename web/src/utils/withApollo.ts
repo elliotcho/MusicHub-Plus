@@ -10,8 +10,8 @@ const client = (ctx: NextPageContext) => (
         cache: new InMemoryCache,
         headers: {
             cookie: 
-                (isServer() 
-                    ? ctx?.req?.headers?.cookie :
+                (isServer() ?
+                    ctx?.req?.headers?.cookie :
                     undefined
                 )
         }
