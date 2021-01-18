@@ -35,20 +35,22 @@ const Login: React.FC<{}> = ({}) => {
                 }}
             >
                 {({ values, isSubmitting, handleChange, errors }) => (
-                    <Box mx='auto'>
+                    <Box mx='auto' width={400}>
                         <Heading color='white' mb={3}>
                             Sign In
                         </Heading>  
 
                         <Form>
-                            <Input
-                                type = 'text'
-                                placeholder ='Username'
-                                onChange = {handleChange}
-                                value = {values.username}
-                                background = 'white'
-                                name = 'username'
-                            />
+                            <Box>
+                                <Input
+                                    type = 'text'
+                                    placeholder ='Username'
+                                    onChange = {handleChange}
+                                    value = {values.username}
+                                    background = 'white'
+                                    name = 'username'
+                                />
+                            </Box>
 
                             {errors && errors.username && (
                                 <Box color='tomato'>
@@ -56,14 +58,16 @@ const Login: React.FC<{}> = ({}) => {
                                 </Box>
                             )}
 
-                            <Input
-                                type = 'password'
-                                placeholder = 'Password'
-                                onChange = {handleChange}
-                                value = {values.password}
-                                background = 'white'
-                                name ='password'
-                            />
+                            <Box>             
+                                <Input
+                                    type = 'password'
+                                    placeholder = 'Password'
+                                    onChange = {handleChange}
+                                    value = {values.password}
+                                    background = 'white'
+                                    name ='password'
+                                />
+                            </Box>
 
                             
                             {errors && errors.password && (
@@ -77,7 +81,7 @@ const Login: React.FC<{}> = ({}) => {
                             </Button>
                         </Form>
 
-                        <Box onClick={() => router.push('/register')} color='white'>
+                        <Box onClick={() => router.push('/register')} color='white' cursor='pointer'>
                             Don't have an account?
                         </Box>
                     </Box>

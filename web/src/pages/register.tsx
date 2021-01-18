@@ -65,7 +65,7 @@ const Login: React.FC<{}> = ({}) => {
                         </Button>
                     </Form>
 
-                    <Box onClick={() => router.push('/login')} color='white'>
+                    <Box onClick={() => router.push('/login')} color='white' cursor='pointer'>
                             Already have an account?
                     </Box>
                 </Box>
