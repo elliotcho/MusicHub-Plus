@@ -64,6 +64,10 @@ const Login: React.FC<{}> = ({}) => {
                             Login
                         </Button>
                     </Form>
+
+                    <Box onClick={() => router.push('/login')} color='white'>
+                            Already have an account?
+                    </Box>
                 </Box>
             )}
             </Formik>

@@ -14,7 +14,7 @@ const Login: React.FC<{}> = ({}) => {
         <ConcertWrapper>
             <Formik
                 initialValues={{username: '', password: ''}}
-                onSubmit={async (values) => {
+                onSubmit={async (values, { setErrors }) => {
                     const response = await login({
                         variables: {
                             input: values
@@ -23,10 +23,18 @@ const Login: React.FC<{}> = ({}) => {
 
                     if(response.data.login.user){
                         router.push('/');
+                    } else {
+                        const errors = {};
+
+                        response.data.login.errors.forEach(({ field, message }) => {
+                            errors[field] = message;
+                        });
+
+                        setErrors(errors);
                     }
                 }}
             >
-                {({ values, isSubmitting, handleChange }) => (
+                {({ values, isSubmitting, handleChange, errors }) => (
                     <Box mx='auto'>
                         <Heading color='white' mb={3}>
                             Sign In
@@ -42,6 +50,12 @@ const Login: React.FC<{}> = ({}) => {
                                 name = 'username'
                             />
 
+                            {errors && errors.username && (
+                                <Box color='tomato'>
+                                    {errors.username}
+                                </Box>
+                            )}
+
                             <Input
                                 type = 'password'
                                 placeholder = 'Password'
@@ -51,10 +65,21 @@ const Login: React.FC<{}> = ({}) => {
                                 name ='password'
                             />
 
+                            
+                            {errors && errors.password && (
+                                <Box color='tomato'>
+                                    {errors.password}
+                                </Box>
+                            )}
+
                             <Button type='submit' mt={4} isLoading={isSubmitting}>
                                 Login
                             </Button>
                         </Form>
+
+                        <Box onClick={() => router.push('/register')} color='white'>
+                            Don't have an account?
+                        </Box>
                     </Box>
                 )}
             </Formik>      
