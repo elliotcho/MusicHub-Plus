@@ -1,13 +1,17 @@
 import React from 'react';
-import { Box, Flex, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import { useMeQuery } from '../generated/graphql';
+import { useApolloClient } from '@apollo/client';
+import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
 
 interface NavbarProps {}
 
 const Navbar : React.FC<{}> = ({}) => {
+    const [logout] = useLogoutMutation();
+    const apolloClient = useApolloClient();
+
     const { data, loading } = useMeQuery({
         skip: isServer()
     });
@@ -28,6 +32,21 @@ const Navbar : React.FC<{}> = ({}) => {
                         Register
                     </Link>
                 </NextLink>
+            </>
+        )
+    }
+
+    else{
+        body = (
+            <>
+                <Button
+                    onClick = {async () => {
+                        await logout();
+                        await apolloClient.resetStore();
+                    }}
+                >
+                    Logout
+                </Button>
             </>
         )
     }

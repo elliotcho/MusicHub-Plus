@@ -2,7 +2,7 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import { withApollo } from '../utils/withApollo';
 import { Box, Button, Heading, Input } from '@chakra-ui/react';
-import { useLoginMutation } from '../generated/graphql';
+import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
 import ConcertWrapper from '../components/ConcertWrapper';
 
@@ -16,8 +16,15 @@ const Login: React.FC<{}> = ({}) => {
                 initialValues={{username: '', password: ''}}
                 onSubmit={async (values, { setErrors }) => {
                     const response = await login({
-                        variables: {
-                            input: values
+                        variables: { input: values },
+                        update: (cache, { data }) => {
+                            cache.writeQuery<MeQuery>({
+                                query: MeDocument,
+                                data: {
+                                    __typename: 'Query',
+                                    me: data?.login.user
+                                }
+                            });
                         }
                     });
 
