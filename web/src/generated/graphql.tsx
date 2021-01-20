@@ -36,7 +36,7 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
-  uploadFile: Scalars['Boolean'];
+  uploadSong: Scalars['Boolean'];
 };
 
 
@@ -61,7 +61,7 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationUploadFileArgs = {
+export type MutationUploadSongArgs = {
   file: Scalars['Upload'];
 };
 
@@ -135,14 +135,14 @@ export type RegisterMutation = (
   ) }
 );
 
-export type UploadFileMutationVariables = Exact<{
+export type UploadSongMutationVariables = Exact<{
   file: Scalars['Upload'];
 }>;
 
 
-export type UploadFileMutation = (
+export type UploadSongMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'uploadFile'>
+  & Pick<Mutation, 'uploadSong'>
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -264,36 +264,36 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const UploadFileDocument = gql`
-    mutation UploadFile($file: Upload!) {
-  uploadFile(file: $file)
+export const UploadSongDocument = gql`
+    mutation UploadSong($file: Upload!) {
+  uploadSong(file: $file)
 }
     `;
-export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
+export type UploadSongMutationFn = Apollo.MutationFunction<UploadSongMutation, UploadSongMutationVariables>;
 
 /**
- * __useUploadFileMutation__
+ * __useUploadSongMutation__
  *
- * To run a mutation, you first call `useUploadFileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadFileMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUploadSongMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadSongMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
+ * const [uploadSongMutation, { data, loading, error }] = useUploadSongMutation({
  *   variables: {
  *      file: // value for 'file'
  *   },
  * });
  */
-export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
-        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, baseOptions);
+export function useUploadSongMutation(baseOptions?: Apollo.MutationHookOptions<UploadSongMutation, UploadSongMutationVariables>) {
+        return Apollo.useMutation<UploadSongMutation, UploadSongMutationVariables>(UploadSongDocument, baseOptions);
       }
-export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
-export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
-export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
+export type UploadSongMutationHookResult = ReturnType<typeof useUploadSongMutation>;
+export type UploadSongMutationResult = Apollo.MutationResult<UploadSongMutation>;
+export type UploadSongMutationOptions = Apollo.BaseMutationOptions<UploadSongMutation, UploadSongMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {

@@ -87,10 +87,6 @@ const Login: React.FC<{}> = ({}) => {
                                 Login
                             </Button>
                         </Form>
-
-                        <Box onClick={() => router.push('/register')} color='white' cursor='pointer'>
-                            Don't have an account?
-                        </Box>
                     </Box>
                 )}
             </Formik>      

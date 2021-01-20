@@ -18,11 +18,11 @@ export class Song extends BaseEntity {
     id!: number;
 
     @Field()
-    @Column()
+    @Column({ unique: true })
     title!: string;
 
     @Field()
-    @Column()
+    @Column({ unique: true })
     name!: string;
 
     @Field()

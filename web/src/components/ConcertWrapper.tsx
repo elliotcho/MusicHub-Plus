@@ -1,5 +1,6 @@
 import React from 'react';
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
+import Navbar from './Navbar';
 
 interface ConcertLayoutProps {
     gradient?: string | undefined
@@ -16,14 +17,18 @@ const ConcertWrapper: React.FC<ConcertLayoutProps> = ({ children, gradient = und
         bgImage: `${bgGradient}, url('/concert.jpg')`,
         bgRepeat: "no-repeat",
         bgPosition: "center",
-        h: "100vh",
+        h: "92vh",
         align: "center"
     }
 
     return(
-        <Flex {...style}>
-            {children}
-        </Flex>
+        <Box>
+            <Navbar />
+
+            <Flex {...style}>
+                {children}
+            </Flex>
+        </Box>
     )
 }
 

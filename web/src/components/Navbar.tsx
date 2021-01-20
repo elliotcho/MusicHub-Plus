@@ -52,7 +52,7 @@ const Navbar : React.FC<{}> = ({}) => {
     }
 
     return(
-        <Flex p={2} bg='tan' align='center'>
+        <Flex p={2} bg='tan' align='center' h='8vh'>
             <NextLink href='/'>
                <Link>
                     <Image 
