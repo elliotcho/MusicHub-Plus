@@ -4,13 +4,11 @@ import connectRedis from 'connect-redis';
 import express from 'express';
 import session from 'express-session';
 import Redis from 'ioredis';
-import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import { User } from './entities/User';
 import { Song } from './entities/Song';
-import { UserResolver } from './resolvers/user';
-import { SongResolver } from './resolvers/song';
+import { createSchema } from './utils/createSchema';
 import cors from 'cors';
 
 const main = async () => {
@@ -53,11 +51,10 @@ const main = async () => {
         })
     );
 
+    const schema = await createSchema();
+
     const apolloServer = new ApolloServer({
-        schema: await buildSchema({
-            resolvers: [SongResolver, UserResolver],
-            validate: false
-        }),
+        schema,
         context: ({req, res}) => ({req, res, redis})
     });
 

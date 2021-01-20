@@ -23,7 +23,7 @@ const Login: React.FC<{}> = ({}) => {
 
                     if(response.data.register.user){
                         router.push('/');
-                    }
+                    } 
                 }}
             >
             {({ values, isSubmitting, handleChange }) => (
