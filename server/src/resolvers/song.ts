@@ -1,4 +1,4 @@
-import { Arg, Ctx, Mutation, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
 import { GraphQLUpload } from 'graphql-upload';
 import { getConnection } from 'typeorm';
 import { v4 } from 'uuid';
@@ -10,16 +10,43 @@ import { isAuth } from '../middleware/isAuth';
 import { Song } from "../entities/Song";
 
 
-// @ObjectType()
-// class SongResponse {
-//    @Field(() => String)
-//    title!: string;
-//    @Field(() => GraphQLUpload)
-//    file!: Upload
-// }
+@ObjectType()
+class SongResponse {
+   @Field(() => String)
+   title!: string;
+   @Field(() => GraphQLUpload)
+   file!: Upload
+}
 
 @Resolver()
 export class SongResolver{
+   @Query(() => [SongResponse])
+   //@UseMiddleware(isAuth)
+   async getUserSongs(
+      @Ctx() { req  } : MyContext 
+   ) : Promise<[SongResponse] | null > {
+     
+      const songs = await getConnection().query(
+         `
+            select title, name from song 
+            where song.uid = ${req.session.uid}
+            order by s."createdAt" DESC
+         `
+      );
+
+      if(songs){
+         for(let i=0;i<songs.length;i++){
+            const { name } = songs[i];
+
+            const filePath = `../../images/${name}`;
+
+            songs[i].file = path.join(__dirname, filePath);
+         }
+      }
+
+      return songs? songs: null;
+   }
+
    @Mutation(() => Boolean)
    @UseMiddleware(isAuth)
    async uploadSong(
