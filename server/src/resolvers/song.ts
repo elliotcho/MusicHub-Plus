@@ -36,11 +36,7 @@ export class SongResolver{
 
       if(songs){
          for(let i=0;i<songs.length;i++){
-            const { name } = songs[i];
-
-            const filePath = `../../images/${name}`;
-
-            songs[i].file = path.join(__dirname, filePath);
+            songs[i].file = path.join(__dirname, `../../images/${songs[i].name}`);
          }
       }
 
@@ -57,7 +53,9 @@ export class SongResolver{
          
          const name = 'SONG-' + v4() + path.extname(filename);
          const { uid } = req.session;
-      
+
+         console.log(name, uid, title);
+
          try {
 
             await getConnection()

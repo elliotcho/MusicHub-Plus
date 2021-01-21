@@ -18,6 +18,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
+  getUserSongs: Array<SongResponse>;
 };
 
 export type User = {
@@ -28,6 +29,13 @@ export type User = {
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
+
+export type SongResponse = {
+  __typename?: 'SongResponse';
+  title: Scalars['String'];
+  file: Scalars['Upload'];
+};
+
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -62,6 +70,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationUploadSongArgs = {
+  title: Scalars['String'];
   file: Scalars['Upload'];
 };
 
@@ -87,7 +96,6 @@ export type LoginInput = {
   username: Scalars['String'];
   password: Scalars['String'];
 };
-
 
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
@@ -137,6 +145,7 @@ export type RegisterMutation = (
 
 export type UploadSongMutationVariables = Exact<{
   file: Scalars['Upload'];
+  title: Scalars['String'];
 }>;
 
 
@@ -265,8 +274,8 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const UploadSongDocument = gql`
-    mutation UploadSong($file: Upload!) {
-  uploadSong(file: $file)
+    mutation UploadSong($file: Upload!, $title: String!) {
+  uploadSong(file: $file, title: $title)
 }
     `;
 export type UploadSongMutationFn = Apollo.MutationFunction<UploadSongMutation, UploadSongMutationVariables>;
@@ -285,6 +294,7 @@ export type UploadSongMutationFn = Apollo.MutationFunction<UploadSongMutation, U
  * const [uploadSongMutation, { data, loading, error }] = useUploadSongMutation({
  *   variables: {
  *      file: // value for 'file'
+ *      title: // value for 'title'
  *   },
  * });
  */
