@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Box, Button, Input } from '@chakra-ui/react';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { useUploadSongMutation } from '../generated/graphql';
+import { useSongsQuery, useUploadSongMutation } from '../generated/graphql';
 
 const Index = () => {
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState('');
 
   const [upload] = useUploadSongMutation();
+  const { data, loading } = useSongsQuery();
 
   return (
     <>
@@ -38,6 +39,16 @@ const Index = () => {
         >
            Submit
         </Button>
+
+        {!loading && data.songs.map( ({url, title}) => 
+            <div key={url}>
+              <p>{title}</p>
+              
+              <audio controls>
+                <source src={url}/>
+              </audio>
+            </div>
+        )}
       </Box>
     </> 
   )

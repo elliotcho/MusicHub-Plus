@@ -18,7 +18,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
-  getUserSongs: Array<SongResponse>;
+  songs: Array<SongResponse>;
 };
 
 export type User = {
@@ -33,9 +33,8 @@ export type User = {
 export type SongResponse = {
   __typename?: 'SongResponse';
   title: Scalars['String'];
-  file: Scalars['Upload'];
+  url: Scalars['String'];
 };
-
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -96,6 +95,7 @@ export type LoginInput = {
   username: Scalars['String'];
   password: Scalars['String'];
 };
+
 
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
@@ -162,6 +162,17 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username'>
+  )> }
+);
+
+export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SongsQuery = (
+  { __typename?: 'Query' }
+  & { songs: Array<(
+    { __typename?: 'SongResponse' }
+    & Pick<SongResponse, 'title' | 'url'>
   )> }
 );
 
@@ -337,3 +348,36 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const SongsDocument = gql`
+    query Songs {
+  songs {
+    title
+    url
+  }
+}
+    `;
+
+/**
+ * __useSongsQuery__
+ *
+ * To run a query within a React component, call `useSongsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSongsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSongsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSongsQuery(baseOptions?: Apollo.QueryHookOptions<SongsQuery, SongsQueryVariables>) {
+        return Apollo.useQuery<SongsQuery, SongsQueryVariables>(SongsDocument, baseOptions);
+      }
+export function useSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SongsQuery, SongsQueryVariables>) {
+          return Apollo.useLazyQuery<SongsQuery, SongsQueryVariables>(SongsDocument, baseOptions);
+        }
+export type SongsQueryHookResult = ReturnType<typeof useSongsQuery>;
+export type SongsLazyQueryHookResult = ReturnType<typeof useSongsLazyQuery>;
+export type SongsQueryResult = Apollo.QueryResult<SongsQuery, SongsQueryVariables>;

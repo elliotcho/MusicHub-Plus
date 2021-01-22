@@ -1,0 +1,6 @@
+query Songs {
+    songs {
+        title
+        url
+    }
+}

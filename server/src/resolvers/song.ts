@@ -14,29 +14,28 @@ import { Song } from "../entities/Song";
 class SongResponse {
    @Field(() => String)
    title!: string;
-   @Field(() => GraphQLUpload)
-   file!: Upload
+   @Field(() => String)
+   url!: string;
 }
 
 @Resolver()
 export class SongResolver{
    @Query(() => [SongResponse])
-   //@UseMiddleware(isAuth)
-   async getUserSongs(
-      @Ctx() { req  } : MyContext 
-   ) : Promise<[SongResponse] | null > {
+   async songs() : Promise<[SongResponse] | null > {
      
       const songs = await getConnection().query(
          `
             select title, name from song 
-            where song.uid = ${req.session.uid}
-            order by s."createdAt" DESC
+            order by song."createdAt" DESC
          `
       );
 
       if(songs){
          for(let i=0;i<songs.length;i++){
-            songs[i].file = path.join(__dirname, `../../images/${songs[i].name}`);
+            const song = songs[i];
+            
+            const url = `http://localhost:4000/songs/${song.name}`;
+            song.url = url;
          }
       }
 

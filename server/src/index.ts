@@ -10,6 +10,7 @@ import { User } from './entities/User';
 import { Song } from './entities/Song';
 import { createSchema } from './utils/createSchema';
 import cors from 'cors';
+import path from 'path';
 
 const main = async () => {
     await createConnection({
@@ -57,6 +58,8 @@ const main = async () => {
         schema,
         context: ({req, res}) => ({req, res, redis})
     });
+
+    app.use('/songs', express.static(path.join(__dirname, '../songs')));
 
     apolloServer.applyMiddleware({
         app,
