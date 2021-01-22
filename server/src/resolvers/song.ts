@@ -42,6 +42,33 @@ export class SongResolver{
       return songs? songs: null;
    }
 
+   @Query(() => [SongResponse])
+   @UseMiddleware(isAuth)
+   async userSongs(
+      @Ctx() { req } : MyContext
+   ) : Promise<[SongResponse] | null > {
+      const { uid } = req.session;
+     
+      const songs = await getConnection().query(
+         `
+            select title, name from song 
+            where song.uid = ${uid}
+            order by song."createdAt" DESC
+         `
+      );
+
+      if(songs){
+         for(let i=0;i<songs.length;i++){
+            const song = songs[i];
+            
+            const url = `http://localhost:4000/songs/${song.name}`;
+            song.url = url;
+         }
+      }
+
+      return songs? songs: null;
+   }
+
    @Mutation(() => Boolean)
    @UseMiddleware(isAuth)
    async uploadSong(

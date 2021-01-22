@@ -4,11 +4,11 @@ import connectRedis from 'connect-redis';
 import express from 'express';
 import session from 'express-session';
 import Redis from 'ioredis';
-import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
+import { createConnection } from 'typeorm';
+import { createSchema } from './utils/createSchema';
 import { User } from './entities/User';
 import { Song } from './entities/Song';
-import { createSchema } from './utils/createSchema';
 import cors from 'cors';
 import path from 'path';
 
@@ -16,9 +16,19 @@ const main = async () => {
     await createConnection({
         type: 'postgres',
         url: process.env.DB_URL,
-        logging: true,
         synchronize: true,
-        entities: [User, Song]
+        logging: true,
+        entities: [
+            User, 
+            Song
+        ]
+    })
+
+    const schema = await createSchema();
+
+    const apolloServer = new ApolloServer({
+        context: ({req, res}) => ({req, res, redis}),
+        schema
     });
 
     const app = express();
@@ -46,25 +56,15 @@ const main = async () => {
                 sameSite: 'lax', //csrf
                 secure: false    //includes http
             },
-            resave: false,
+            secret: process.env.SESSION_SECRET as string,
             saveUninitialized: false,
-            secret: process.env.SESSION_SECRET as string
+            resave: false
         })
     );
 
-    const schema = await createSchema();
-
-    const apolloServer = new ApolloServer({
-        schema,
-        context: ({req, res}) => ({req, res, redis})
-    });
-
     app.use('/songs', express.static(path.join(__dirname, '../songs')));
 
-    apolloServer.applyMiddleware({
-        app,
-        cors: false
-    });
+    apolloServer.applyMiddleware({ app, cors: false });
 
     app.listen(4000, () => {
         console.log('server started on localhost:4000');
