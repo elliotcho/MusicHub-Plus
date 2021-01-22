@@ -17,7 +17,9 @@ const Index = () => {
       <Box m='auto' mt={4} width='400px'>
         <Input 
           type='file'
-          onChange={(e) => setFile(e.target.files[0])}
+          onChange={async (e) => {
+              setFile(e.target.files[0]);
+          }}
         />
 
         <Input 
@@ -27,20 +29,14 @@ const Index = () => {
 
         <Button
           onClick = {async () => {
-              file.path = 'path!!';
+             const response = await upload({
+                variables: { file, title }
+             });
 
-              try {
-                const response = await upload({
-                  variables: { file, title }
-                });
-
-                console.log(response); 
-              } catch (err){
-                 console.log(err);
-              }
+             console.log(response);
           }}
         >
-          Submit
+           Submit
         </Button>
       </Box>
     </> 

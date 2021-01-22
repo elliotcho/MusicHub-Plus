@@ -53,9 +53,7 @@ export class SongResolver{
          
          const name = 'SONG-' + v4() + path.extname(filename);
          const { uid } = req.session;
-
-         console.log(name, uid, title);
-
+         
          try {
 
             await getConnection()
@@ -71,7 +69,7 @@ export class SongResolver{
 
          return new Promise(async (resolve, reject) =>
             createReadStream()
-               .pipe(createWriteStream(path.join(__dirname, `../../images/${name}`)))
+               .pipe(createWriteStream(path.join(__dirname, `../../songs/${name}`)))
                .on('finish', () => resolve(true))
                .on('error', () => reject(false))
          )
