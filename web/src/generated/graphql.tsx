@@ -18,7 +18,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
-  songs: Array<SongResponse>;
+  songs: Array<Song>;
 };
 
 export type User = {
@@ -30,10 +30,16 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
-export type SongResponse = {
-  __typename?: 'SongResponse';
+export type Song = {
+  __typename?: 'Song';
+  id: Scalars['Float'];
   title: Scalars['String'];
+  name: Scalars['String'];
   url: Scalars['String'];
+  uid: Scalars['Float'];
+  user: User;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type Mutation = {
@@ -171,8 +177,12 @@ export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
 export type SongsQuery = (
   { __typename?: 'Query' }
   & { songs: Array<(
-    { __typename?: 'SongResponse' }
-    & Pick<SongResponse, 'title' | 'url'>
+    { __typename?: 'Song' }
+    & Pick<Song, 'id' | 'title' | 'url'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ) }
   )> }
 );
 
@@ -351,8 +361,13 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const SongsDocument = gql`
     query Songs {
   songs {
+    id
     title
     url
+    user {
+      id
+      username
+    }
   }
 }
     `;

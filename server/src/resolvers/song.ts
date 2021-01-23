@@ -1,4 +1,4 @@
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from "type-graphql";
 import { GraphQLUpload } from 'graphql-upload';
 import { getConnection } from 'typeorm';
 import { v4 } from 'uuid';
@@ -8,51 +8,23 @@ import path from 'path';
 import { MyContext, Upload } from "../types";
 import { isAuth } from '../middleware/isAuth';
 import { Song } from "../entities/Song";
+import { User } from "../entities/User";
 
-
-@ObjectType()
-class SongResponse {
-   @Field(() => String)
-   title!: string;
-   @Field(() => String)
-   url!: string;
-}
-
-@Resolver()
+@Resolver(Song)
 export class SongResolver{
-   @Query(() => [SongResponse])
-   async songs() : Promise<[SongResponse] | null > {
-     
-      const songs = await getConnection().query(
-         `
-            select title, name from song 
-            order by song."createdAt" DESC
-         `
-      );
-
-      if(songs){
-         for(let i=0;i<songs.length;i++){
-            const song = songs[i];
-            
-            const url = `http://localhost:4000/songs/${song.name}`;
-            song.url = url;
-         }
-      }
-
-      return songs? songs: null;
+   @FieldResolver(() => User)
+   async user(
+      @Root() song: Song
+   ) : Promise<User | undefined> {
+      return User.findOne(song.uid);
    }
 
-   @Query(() => [SongResponse])
-   @UseMiddleware(isAuth)
-   async userSongs(
-      @Ctx() { req } : MyContext
-   ) : Promise<[SongResponse] | null > {
-      const { uid } = req.session;
+   @Query(() => [Song])
+   async songs() : Promise<[Song] | null > {
      
       const songs = await getConnection().query(
          `
-            select title, name from song 
-            where song.uid = ${uid}
+            select * from song 
             order by song."createdAt" DESC
          `
       );

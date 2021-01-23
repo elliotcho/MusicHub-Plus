@@ -1,6 +1,11 @@
 query Songs {
     songs {
+        id
         title
         url
+        user {
+            id
+            username
+        }
     }
 }

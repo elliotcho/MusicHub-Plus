@@ -26,6 +26,9 @@ export class Song extends BaseEntity {
     name!: string;
 
     @Field()
+    url?: string;
+
+    @Field()
     @Column()
     uid: number;
 
