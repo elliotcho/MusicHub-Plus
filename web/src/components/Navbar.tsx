@@ -39,6 +39,12 @@ const Navbar : React.FC<{}> = ({}) => {
     else{
         body = (
             <>
+                <NextLink href = '/upload-song'>
+                    <Link mr={4}>
+                        Upload
+                    </Link>
+                </NextLink>
+                
                 <Button
                     onClick = {async () => {
                         await logout();

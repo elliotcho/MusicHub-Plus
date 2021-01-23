@@ -14,10 +14,10 @@ const ConcertWrapper: React.FC<ConcertLayoutProps> = ({ children, gradient = und
     }
 
     const style = {
+        h: "92vh",
         bgImage: `${bgGradient}, url('/concert.jpg')`,
         bgRepeat: "no-repeat",
         bgPosition: "center",
-        h: "92vh",
         align: "center"
     }
 

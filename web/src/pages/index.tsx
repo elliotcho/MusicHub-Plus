@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-import { Box, Button, Input } from '@chakra-ui/react';
+import React from 'react';
+import { Box } from '@chakra-ui/react';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { useSongsQuery, useUploadSongMutation } from '../generated/graphql';
+import { useSongsQuery } from '../generated/graphql';
 
-const Index = () => {
-  const [file, setFile] = useState(null);
-  const [title, setTitle] = useState('');
-
-  const [upload] = useUploadSongMutation();
+const Index: React.FC<{}> = ({}) => {
   const { data, loading } = useSongsQuery();
 
   return (
@@ -16,29 +12,7 @@ const Index = () => {
       <Navbar />
 
       <Box m='auto' mt={4} width='400px'>
-        <Input 
-          type='file'
-          onChange={async (e) => {
-              setFile(e.target.files[0]);
-          }}
-        />
-
-        <Input 
-            type='text'
-            onChange={(e) => setTitle(e.target.value)}
-        />
-
-        <Button
-          onClick = {async () => {
-             const response = await upload({
-                variables: { file, title }
-             });
-
-             console.log(response);
-          }}
-        >
-           Submit
-        </Button>
+        
 
         {!loading && data.songs.map( ({url, title}) => 
             <div key={url}>
