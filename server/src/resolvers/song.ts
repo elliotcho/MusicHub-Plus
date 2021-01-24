@@ -1,4 +1,4 @@
-import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, FieldResolver, Int, Mutation, Query, Resolver, Root, UseMiddleware } from "type-graphql";
 import { GraphQLUpload } from 'graphql-upload';
 import { getConnection } from 'typeorm';
 import { v4 } from 'uuid';
@@ -17,6 +17,16 @@ export class SongResolver{
       @Root() song: Song
    ) : Promise<User | undefined> {
       return User.findOne(song.uid);
+   }
+
+   @Mutation(() => Boolean)
+   @UseMiddleware(isAuth)
+   async deleteSong(
+      @Arg('id', () => Int) id : number,
+      @Ctx() { req } : MyContext
+   ) : Promise<Boolean> {
+      await Song.delete({ id, uid: req.session.uid });
+      return true;
    }
 
    @Query(() => [Song])

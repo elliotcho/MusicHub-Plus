@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Stack } from '@chakra-ui/react';
+import { Box, IconButton, Stack } from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { useMeQuery, useSongsQuery } from '../generated/graphql';
+import { SongsDocument, SongsQuery, useDeleteSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
 
 const Index: React.FC<{}> = ({}) => {
@@ -11,6 +12,8 @@ const Index: React.FC<{}> = ({}) => {
   const meResponse = useMeQuery({
     skip: isServer()
   });
+
+  const [deleteSong] = useDeleteSongMutation();
 
   return (
     <>
@@ -30,9 +33,18 @@ const Index: React.FC<{}> = ({}) => {
                 <source src={url}/>
               </audio>
 
-              <Box>
-                 {meResponse.data.me?.id === userId && (
-                    'User is owner and can delete'
+              <Box mt={4}>
+                 {meResponse.data?.me?.id === userId && (
+                     <IconButton
+                        icon = {<DeleteIcon/>}
+                        aria-label = 'Delete Song'
+                        _focus = {{outline: 'none'}}
+                        onClick = {async () => {
+                          await deleteSong({
+                             variables: { id }
+                          });
+                        }}
+                     />
                  )}
               </Box>
             </Box>
