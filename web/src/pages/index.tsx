@@ -41,7 +41,10 @@ const Index: React.FC<{}> = ({}) => {
                         _focus = {{outline: 'none'}}
                         onClick = {async () => {
                           await deleteSong({
-                             variables: { id }
+                             variables: { id },
+                             update: (cache) => {
+                                cache.evict({ id: 'Song:' + id });
+                             }
                           });
                         }}
                      />

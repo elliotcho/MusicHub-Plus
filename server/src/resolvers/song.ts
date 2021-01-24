@@ -2,7 +2,7 @@ import { Arg, Ctx, FieldResolver, Int, Mutation, Query, Resolver, Root, UseMiddl
 import { GraphQLUpload } from 'graphql-upload';
 import { getConnection } from 'typeorm';
 import { v4 } from 'uuid';
-import { createWriteStream } from 'fs';
+import fs, { createWriteStream } from 'fs';
 import path from 'path';
 
 import { MyContext, Upload } from "../types";
@@ -25,6 +25,18 @@ export class SongResolver{
       @Arg('id', () => Int) id : number,
       @Ctx() { req } : MyContext
    ) : Promise<Boolean> {
+      const song = await Song.findOne(id);
+
+      if(song?.name){
+         const location = path.join(__dirname, `../../songs/${song.name}`);
+
+         fs.unlink(location, err => {
+            if(err){
+               console.log(err);
+            }
+         });
+      }
+
       await Song.delete({ id, uid: req.session.uid });
       return true;
    }
