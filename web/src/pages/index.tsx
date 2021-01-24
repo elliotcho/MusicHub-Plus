@@ -3,7 +3,7 @@ import { Box, IconButton, Stack } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { SongsDocument, SongsQuery, useDeleteSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+import { useDeleteSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
 
 const Index: React.FC<{}> = ({}) => {

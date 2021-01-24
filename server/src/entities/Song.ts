@@ -5,10 +5,12 @@ import {
     CreateDateColumn, 
     Entity, 
     ManyToOne, 
+    OneToMany, 
     PrimaryGeneratedColumn, 
     UpdateDateColumn 
 } from "typeorm";
 import { User } from "./User";
+import { Rating } from './Rating';
 
 @ObjectType()
 @Entity()
@@ -35,6 +37,9 @@ export class Song extends BaseEntity {
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.songs)
     user: User;
+
+    @OneToMany(() => Rating, (rating) => rating.song)
+    ratings: Rating[];
 
     @Field(() => String)
     @CreateDateColumn()

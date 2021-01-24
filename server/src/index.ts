@@ -9,6 +9,7 @@ import { createConnection } from 'typeorm';
 import { createSchema } from './utils/createSchema';
 import { User } from './entities/User';
 import { Song } from './entities/Song';
+import { Rating } from './entities/Rating';
 import cors from 'cors';
 import path from 'path';
 
@@ -20,7 +21,8 @@ const main = async () => {
         logging: true,
         entities: [
             User, 
-            Song
+            Song,
+            Rating
         ]
     })
 
