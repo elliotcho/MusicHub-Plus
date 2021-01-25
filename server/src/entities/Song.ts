@@ -38,6 +38,14 @@ export class Song extends BaseEntity {
     @ManyToOne(() => User, (user) => user.songs)
     user: User;
 
+    @Field()
+    @Column({ default: 0 })
+    likes!: number;
+
+    @Field()
+    @Column({ default: 0 })
+    dislikes!: number;
+
     @OneToMany(() => Rating, (rating) => rating.song)
     ratings: Rating[];
 

@@ -38,6 +38,8 @@ export type Song = {
   url: Scalars['String'];
   uid: Scalars['Float'];
   user: User;
+  likes: Scalars['Float'];
+  dislikes: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -49,6 +51,7 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+  likeSong: Scalars['Boolean'];
   deleteSong: Scalars['Boolean'];
   uploadSong: Scalars['Boolean'];
 };
@@ -72,6 +75,11 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+
+export type MutationLikeSongArgs = {
+  songId: Scalars['Int'];
 };
 
 
@@ -117,6 +125,16 @@ export type DeleteSongMutationVariables = Exact<{
 export type DeleteSongMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deleteSong'>
+);
+
+export type LikeSongMutationVariables = Exact<{
+  songId: Scalars['Int'];
+}>;
+
+
+export type LikeSongMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'likeSong'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -194,7 +212,7 @@ export type SongsQuery = (
   { __typename?: 'Query' }
   & { songs: Array<(
     { __typename?: 'Song' }
-    & Pick<Song, 'id' | 'title' | 'url'>
+    & Pick<Song, 'id' | 'title' | 'url' | 'likes'>
     & { user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username'>
@@ -233,6 +251,36 @@ export function useDeleteSongMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteSongMutationHookResult = ReturnType<typeof useDeleteSongMutation>;
 export type DeleteSongMutationResult = Apollo.MutationResult<DeleteSongMutation>;
 export type DeleteSongMutationOptions = Apollo.BaseMutationOptions<DeleteSongMutation, DeleteSongMutationVariables>;
+export const LikeSongDocument = gql`
+    mutation LikeSong($songId: Int!) {
+  likeSong(songId: $songId)
+}
+    `;
+export type LikeSongMutationFn = Apollo.MutationFunction<LikeSongMutation, LikeSongMutationVariables>;
+
+/**
+ * __useLikeSongMutation__
+ *
+ * To run a mutation, you first call `useLikeSongMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeSongMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeSongMutation, { data, loading, error }] = useLikeSongMutation({
+ *   variables: {
+ *      songId: // value for 'songId'
+ *   },
+ * });
+ */
+export function useLikeSongMutation(baseOptions?: Apollo.MutationHookOptions<LikeSongMutation, LikeSongMutationVariables>) {
+        return Apollo.useMutation<LikeSongMutation, LikeSongMutationVariables>(LikeSongDocument, baseOptions);
+      }
+export type LikeSongMutationHookResult = ReturnType<typeof useLikeSongMutation>;
+export type LikeSongMutationResult = Apollo.MutationResult<LikeSongMutation>;
+export type LikeSongMutationOptions = Apollo.BaseMutationOptions<LikeSongMutation, LikeSongMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($input: LoginInput!) {
   login(input: $input) {
@@ -410,6 +458,7 @@ export const SongsDocument = gql`
     id
     title
     url
+    likes
     user {
       id
       username

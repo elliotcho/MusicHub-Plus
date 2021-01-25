@@ -1,0 +1,3 @@
+mutation LikeSong($songId: Int!) {
+    likeSong(songId: $songId)
+}

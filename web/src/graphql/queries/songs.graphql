@@ -3,6 +3,7 @@ query Songs {
         id
         title
         url
+        likes
         user {
             id
             username

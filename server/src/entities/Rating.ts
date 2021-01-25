@@ -16,6 +16,8 @@ export class Rating extends BaseEntity {
     @PrimaryColumn()
     songId: number;
 
-    @ManyToOne(() => Song, (song) => song.ratings)
+    @ManyToOne(() => Song, (song) => song.ratings, {
+        onDelete: 'CASCADE'
+    })
     song: Song;
 }
