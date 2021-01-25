@@ -22,6 +22,74 @@ export class SongResolver{
 
    @Mutation(() => Boolean)
    @UseMiddleware(isAuth)
+   async dislikeSong(
+      @Arg('songId', () => Int) songId: number,
+      @Ctx() { req } : MyContext
+   ) {
+      const { uid } = req.session;
+
+      const rating = await Rating.findOne({ songId, userId: uid });
+
+      if(rating?.value === -1) {
+         await getConnection().transaction(async (tm) => {
+            await tm.query(
+               `
+                delete from rating
+                where "songId" = ${songId} and
+                "userId" = ${uid}
+               `
+            );
+
+            await tm.query(
+               `
+                update song
+                set dislikes = dislikes - 1
+                where id = ${songId}
+               `
+            );
+         });
+      } else if(rating?.value === 1) {
+         await getConnection().transaction(async (tm) => {
+            await tm.query(
+               `
+                update rating
+                set value = value - 2
+               `
+            );
+
+            await tm.query(
+               `
+                update song
+                set likes = likes - 1,
+                dislikes = dislikes + 1
+                where id = ${songId}
+               `
+            );
+         });
+      } else {
+         await getConnection().transaction(async (tm) => {
+            await tm.query(
+               `
+                insert into rating ("userId", "songId", value)
+                values (${uid}, ${songId}, -1)
+               `
+            );
+
+            await tm.query(
+               `
+                update song
+                set dislikes = dislikes + 1
+                where id = ${songId}
+               `
+            );
+         });
+      }
+
+      return true;
+   }
+
+   @Mutation(() => Boolean)
+   @UseMiddleware(isAuth)
    async likeSong(
       @Arg('songId', () => Int) songId: number,
       @Ctx() { req } : MyContext
@@ -44,6 +112,24 @@ export class SongResolver{
                `
                 update song
                 set likes = likes - 1
+                where id = ${songId}
+               `
+            );
+         });
+      } else if(rating?.value === -1) {
+         await getConnection().transaction(async (tm) => {
+            await tm.query(
+               `
+                update rating
+                set value = value + 2
+               `
+            );
+
+            await tm.query(
+               `
+                update song
+                set likes = likes + 1,
+                dislikes = dislikes - 1
                 where id = ${songId}
                `
             );

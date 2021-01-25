@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, IconButton, Stack } from '@chakra-ui/react';
-import { ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { useDeleteSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+import { useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
 
 const Index: React.FC<{}> = ({}) => {
@@ -14,6 +14,7 @@ const Index: React.FC<{}> = ({}) => {
   });
 
   const [deleteSong] = useDeleteSongMutation();
+  const [dislikeSong] = useDislikeSongMutation();
   const [likeSong] = useLikeSongMutation();
 
   return (
@@ -23,7 +24,7 @@ const Index: React.FC<{}> = ({}) => {
       <Stack m='auto' mt={4} width='400px'>
 
         {!loading && data.songs.map( ({
-           id, title, url, likes, user: { id: userId, username }
+           id, title, url, likes, dislikes, user: { id: userId, username }
         }) => 
             <Box key={id} my={8}>
               <Box>
@@ -64,6 +65,20 @@ const Index: React.FC<{}> = ({}) => {
                  />
 
                  {likes}
+
+                 <IconButton
+                    mx = {4}
+                    icon = {<ChevronDownIcon/>}
+                    aria-label = 'Disike Song'
+                    _focus = {{outline: 'none'}}
+                    onClick = {async () => {
+                       await dislikeSong({
+                         variables: { songId: id }
+                       });
+                    }}
+                 />
+
+                 {dislikes}
               </Box>
             </Box>
         )}

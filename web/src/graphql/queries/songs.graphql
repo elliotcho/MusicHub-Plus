@@ -4,6 +4,7 @@ query Songs {
         title
         url
         likes
+        dislikes
         user {
             id
             username
