@@ -6,7 +6,7 @@ import { MeDocument, MeQuery, useRegisterMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
 import ConcertWrapper from '../components/ConcertWrapper';
 
-const Login: React.FC<{}> = ({}) => {
+const Register: React.FC<{}> = ({}) => {
     const router = useRouter();
     const [register] = useRegisterMutation();
 
@@ -101,7 +101,7 @@ const Login: React.FC<{}> = ({}) => {
                         )}
 
                         <Button type='submit' mt={4} isLoading={isSubmitting}>
-                            Login
+                            Register
                         </Button>
                     </Form>
                 </Box>
@@ -111,4 +111,4 @@ const Login: React.FC<{}> = ({}) => {
     );
 }
 
-export default withApollo({ssr: false})(Login);
+export default withApollo({ ssr: false })(Register);

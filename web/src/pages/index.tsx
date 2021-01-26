@@ -3,9 +3,8 @@ import { Box, IconButton, Stack } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { DislikeSongMutation, LikeSongMutation, useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+import { useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
-import { ApolloCache } from '@apollo/client';
 
 const Index: React.FC<{}> = ({}) => {
   const { data, loading } = useSongsQuery();
@@ -17,6 +16,16 @@ const Index: React.FC<{}> = ({}) => {
   const [deleteSong] = useDeleteSongMutation();
   const [dislikeSong] = useDislikeSongMutation();
   const [likeSong] = useLikeSongMutation();
+
+  document.addEventListener('play', e => {
+    const audioList = document.getElementsByTagName('audio');
+
+    for(let i=0;i<audioList.length;i++){
+       if(audioList[i] !== e.target) {
+          audioList[i].pause(); 
+       }
+    }
+  }, true);
 
   return (
     <>
