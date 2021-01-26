@@ -126,7 +126,23 @@ export class UserResolver{
 
             user = result.raw[0];
         } catch (err) {
-           //handle error for same username/email
+           const user = await User.findOne({ email: input.email });
+
+           if(user) {
+               return {
+                   errors : [{
+                        field: 'email',
+                        message: 'Email already exists'
+                   }]
+               };
+           } else {
+                return {
+                    errors : [{
+                        field: 'username',
+                        message: 'username already exists'
+                    }]
+                };
+           }
         }
 
         req.session.uid = user.id;

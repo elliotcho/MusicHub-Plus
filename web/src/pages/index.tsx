@@ -3,8 +3,9 @@ import { Box, IconButton, Stack } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+import { DislikeSongMutation, LikeSongMutation, useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
+import { ApolloCache } from '@apollo/client';
 
 const Index: React.FC<{}> = ({}) => {
   const { data, loading } = useSongsQuery();
