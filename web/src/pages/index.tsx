@@ -24,7 +24,7 @@ const Index: React.FC<{}> = ({}) => {
       <Stack m='auto' mt={4} width='400px'>
 
         {!loading && data.songs.map( ({
-           id, title, url, likes, dislikes, user: { id: userId, username }
+           id, title, url, ratingStatus, likes, dislikes, user: { id: userId, username }
         }) => 
             <Box key={id} my={8}>
               <Box>
@@ -57,6 +57,7 @@ const Index: React.FC<{}> = ({}) => {
                     icon = {<ChevronUpIcon/>}
                     aria-label = 'Like Song'
                     _focus = {{outline: 'none'}}
+                    colorScheme = {ratingStatus === 1? 'green' : undefined}
                     onClick = {async () => {
                        await likeSong({
                          variables: { songId: id }
@@ -71,6 +72,7 @@ const Index: React.FC<{}> = ({}) => {
                     icon = {<ChevronDownIcon/>}
                     aria-label = 'Disike Song'
                     _focus = {{outline: 'none'}}
+                    colorScheme = {ratingStatus === -1? 'red' : undefined}
                     onClick = {async () => {
                        await dislikeSong({
                          variables: { songId: id }

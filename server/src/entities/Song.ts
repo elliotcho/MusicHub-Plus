@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { 
     BaseEntity, 
     Column, 
@@ -27,7 +27,7 @@ export class Song extends BaseEntity {
     @Column({ unique: true })
     name!: string;
 
-    @Field()
+    @Field(() => String)
     url?: string;
 
     @Field()
@@ -37,6 +37,9 @@ export class Song extends BaseEntity {
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.songs)
     user: User;
+
+    @Field(() => Int, { nullable: true })
+    ratingStatus: number | null;
 
     @Field()
     @Column({ default: 0 })

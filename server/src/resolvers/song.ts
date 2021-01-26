@@ -20,6 +20,23 @@ export class SongResolver{
       return User.findOne(song.uid);
    }
 
+   @FieldResolver(() => Int)
+   async ratingStatus(
+      @Root() song: Song,
+      @Ctx() { req } : MyContext
+   ) : Promise<number | null > {
+      if(!req.session.uid){
+         return null;
+      }
+
+      const rating = await Rating.findOne({ 
+         userId: req.session.uid,
+         songId: song.id
+      });
+
+      return rating? rating.value: null;
+   }
+
    @Mutation(() => Boolean)
    @UseMiddleware(isAuth)
    async dislikeSong(

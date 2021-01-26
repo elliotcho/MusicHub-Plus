@@ -3,8 +3,9 @@ query Songs {
         id
         title
         url
-        likes
+        ratingStatus
         dislikes
+        likes
         user {
             id
             username

@@ -38,6 +38,7 @@ export type Song = {
   url: Scalars['String'];
   uid: Scalars['Float'];
   user: User;
+  ratingStatus?: Maybe<Scalars['Int']>;
   likes: Scalars['Float'];
   dislikes: Scalars['Float'];
   createdAt: Scalars['String'];
@@ -228,7 +229,7 @@ export type SongsQuery = (
   { __typename?: 'Query' }
   & { songs: Array<(
     { __typename?: 'Song' }
-    & Pick<Song, 'id' | 'title' | 'url' | 'likes' | 'dislikes'>
+    & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'dislikes' | 'likes'>
     & { user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username'>
@@ -504,8 +505,9 @@ export const SongsDocument = gql`
     id
     title
     url
-    likes
+    ratingStatus
     dislikes
+    likes
     user {
       id
       username
