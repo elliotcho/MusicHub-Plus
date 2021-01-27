@@ -3,7 +3,7 @@ import { Box, IconButton, Stack } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { LikeSongMutation, useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+import { DislikeSongMutation, LikeSongMutation, useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
 import gql from 'graphql-tag';
 import { ApolloCache } from '@apollo/client';
@@ -38,6 +38,7 @@ const Index: React.FC<{}> = ({}) => {
     const data = cache.readFragment<{
       id: number
       ratingStatus: number | null;
+      dislikes: number;
       likes: number;
     }>({
       id: 'Song:' + songId,
@@ -45,22 +46,28 @@ const Index: React.FC<{}> = ({}) => {
          fragment _ on Song {
             id
             ratingStatus
+            dislikes
             likes
          }
       `
     });
 
     if(data) {
-      const { ratingStatus, likes } = data;
+      const { ratingStatus, likes, dislikes } = data;
        
-      let newValue = 0;
+      let newLikesValue = likes;
+      let newDislikesValue = dislikes;
       let newStatus = 0;
       
       if(ratingStatus === 1) {
-         newValue = likes - 1;
+         newLikesValue -= 1;
          newStatus = 0;
       } else {
-         newValue = likes + 1;
+         if(ratingStatus === -1) {
+            newDislikesValue -= 1;
+         }
+
+         newLikesValue += 1;
          newStatus = 1;
       }
 
@@ -69,13 +76,76 @@ const Index: React.FC<{}> = ({}) => {
           fragment: gql`
             fragment _ on Song {
               ratingStatus
+              dislikes
               likes
             }
           `,
-          data: { likes: newValue, ratingStatus: newStatus }
+          data: { 
+            likes: newLikesValue,
+            dislikes: newDislikesValue, 
+            ratingStatus: newStatus 
+          }
        });
     }
   }
+
+  const updateAfterDisike = (
+    cache: ApolloCache<DislikeSongMutation >,
+    songId: number
+  ) => {
+     const data = cache.readFragment<{
+        id: number
+        ratingStatus: number | null;
+        dislikes: number;
+        likes: number;
+      }>({
+          id: 'Song:' + songId,
+          fragment: gql`
+            fragment _ on Song {
+              id
+              ratingStatus
+              dislikes
+              likes
+          }
+        `
+      });
+
+      if(data) {
+        const { ratingStatus, likes, dislikes } = data;
+          
+        let newLikesValue = likes;
+        let newDislikesValue = dislikes;
+        let newStatus = 0;
+        
+        if(ratingStatus === -1) {
+            newDislikesValue -= 1;
+            newStatus = 0;
+        } else {
+            if(ratingStatus === 1) {
+              newLikesValue -= 1;
+            }
+
+            newDislikesValue += 1;
+            newStatus = -1;
+        }
+
+        cache.writeFragment({
+          id: 'Song:' + songId,
+          fragment: gql`
+            fragment _ on Song {
+              ratingStatus
+              dislikes
+              likes
+            }
+          `,
+          data: { 
+            likes: newLikesValue,
+            dislikes: newDislikesValue, 
+            ratingStatus: newStatus 
+          }
+        });
+      }
+    }
 
   return (
     <>
@@ -138,7 +208,10 @@ const Index: React.FC<{}> = ({}) => {
                     colorScheme = {ratingStatus === -1? 'red' : undefined}
                     onClick = {async () => {
                        await dislikeSong({
-                         variables: { songId: id }
+                         variables: { songId: id },
+                         update: (cache) => {
+                            updateAfterDisike(cache, id);
+                         }
                        });
                     }}
                  />
