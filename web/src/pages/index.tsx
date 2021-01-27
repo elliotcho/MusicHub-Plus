@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, IconButton, Stack } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { DislikeSongMutation, LikeSongMutation, useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+import { useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+import { updateAfterLike, updateAfterDisike } from '../utils/updateAfterRating';
 import { isServer } from '../utils/isServer';
-import gql from 'graphql-tag';
-import { ApolloCache } from '@apollo/client';
+import ConfirmModal from '../components/ConfirmModal';
 
 const Index: React.FC<{}> = ({}) => {
   const { data, loading } = useSongsQuery();
@@ -19,6 +19,9 @@ const Index: React.FC<{}> = ({}) => {
   const [dislikeSong] = useDislikeSongMutation();
   const [likeSong] = useLikeSongMutation();
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [toDelete, setToDelete] = useState(-1);
+
   if(!isServer()){
     document.addEventListener('play', e => {
       const audioList = document.getElementsByTagName('audio');
@@ -30,122 +33,6 @@ const Index: React.FC<{}> = ({}) => {
       }
     }, true);
   }
-
-  const updateAfterLike = (
-     cache: ApolloCache<LikeSongMutation >,
-     songId: number
-  ) => {
-    const data = cache.readFragment<{
-      id: number
-      ratingStatus: number | null;
-      dislikes: number;
-      likes: number;
-    }>({
-      id: 'Song:' + songId,
-      fragment: gql`
-         fragment _ on Song {
-            id
-            ratingStatus
-            dislikes
-            likes
-         }
-      `
-    });
-
-    if(data) {
-      const { ratingStatus, likes, dislikes } = data;
-       
-      let newLikesValue = likes;
-      let newDislikesValue = dislikes;
-      let newStatus = 0;
-      
-      if(ratingStatus === 1) {
-         newLikesValue -= 1;
-         newStatus = 0;
-      } else {
-         if(ratingStatus === -1) {
-            newDislikesValue -= 1;
-         }
-
-         newLikesValue += 1;
-         newStatus = 1;
-      }
-
-       cache.writeFragment({
-          id: 'Song:' + songId,
-          fragment: gql`
-            fragment _ on Song {
-              ratingStatus
-              dislikes
-              likes
-            }
-          `,
-          data: { 
-            likes: newLikesValue,
-            dislikes: newDislikesValue, 
-            ratingStatus: newStatus 
-          }
-       });
-    }
-  }
-
-  const updateAfterDisike = (
-    cache: ApolloCache<DislikeSongMutation >,
-    songId: number
-  ) => {
-     const data = cache.readFragment<{
-        id: number
-        ratingStatus: number | null;
-        dislikes: number;
-        likes: number;
-      }>({
-          id: 'Song:' + songId,
-          fragment: gql`
-            fragment _ on Song {
-              id
-              ratingStatus
-              dislikes
-              likes
-          }
-        `
-      });
-
-      if(data) {
-        const { ratingStatus, likes, dislikes } = data;
-          
-        let newLikesValue = likes;
-        let newDislikesValue = dislikes;
-        let newStatus = 0;
-        
-        if(ratingStatus === -1) {
-            newDislikesValue -= 1;
-            newStatus = 0;
-        } else {
-            if(ratingStatus === 1) {
-              newLikesValue -= 1;
-            }
-
-            newDislikesValue += 1;
-            newStatus = -1;
-        }
-
-        cache.writeFragment({
-          id: 'Song:' + songId,
-          fragment: gql`
-            fragment _ on Song {
-              ratingStatus
-              dislikes
-              likes
-            }
-          `,
-          data: { 
-            likes: newLikesValue,
-            dislikes: newDislikesValue, 
-            ratingStatus: newStatus 
-          }
-        });
-      }
-    }
 
   return (
     <>
@@ -171,13 +58,9 @@ const Index: React.FC<{}> = ({}) => {
                         icon = {<DeleteIcon/>}
                         aria-label = 'Delete Song'
                         _focus = {{outline: 'none'}}
-                        onClick = {async () => {
-                          await deleteSong({
-                             variables: { id },
-                             update: (cache) => {
-                                cache.evict({ id: 'Song:' + id });
-                             }
-                          });
+                        onClick = {() => {
+                           setToDelete(id);
+                           setIsOpen(true);
                         }}
                      />
                  )}
@@ -222,6 +105,22 @@ const Index: React.FC<{}> = ({}) => {
         )}
 
       </Stack>
+
+      <ConfirmModal 
+         isOpen={isOpen}
+         onClick={async () => {
+            await deleteSong({
+              variables: { id: toDelete },
+              update: (cache) => {
+                cache.evict({ id: 'Song:' + toDelete });
+              }
+            });
+
+            setToDelete(-1);
+         }}
+         onClose={() => setIsOpen(false)}
+         body = 'Are you sure you want to delete this song?'
+      />
     </> 
   )
 };

@@ -7,6 +7,8 @@ import ConcertWrapper from '../components/ConcertWrapper';
 const UploadSong: React.FC<{}> = () => {
     const [file, setFile] = useState(null);
     const [title, setTitle] = useState('');
+
+    const [isLoading, setIsLoading] = useState(false);
   
     const [upload] = useUploadSongMutation();
 
@@ -27,7 +29,10 @@ const UploadSong: React.FC<{}> = () => {
                 />
 
                 <Button
+                    isLoading={isLoading}
                     onClick = {async () => {
+                        setIsLoading(true);
+
                         await upload({
                             variables: { file, title }
                         });
