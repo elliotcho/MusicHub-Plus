@@ -40,7 +40,7 @@ const Index: React.FC<{}> = ({}) => {
 
       <Stack m='auto' mt={4} width='400px'>
 
-        {!loading && data.songs.map( ({
+        {!loading && data.songs?.map( ({
            id, title, url, ratingStatus, likes, dislikes, user: { id: userId, username }
         }) => 
             <Box key={id} my={8} p={8}>

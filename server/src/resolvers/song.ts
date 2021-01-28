@@ -202,6 +202,7 @@ export class SongResolver{
          `
             select * from song 
             order by song."createdAt" DESC
+            limit 5
          `
       );
 

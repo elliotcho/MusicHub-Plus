@@ -19,12 +19,15 @@ const main = async () => {
         url: process.env.DB_URL,
         synchronize: true,
         logging: true,
+        migrations: [path.join(__dirname, "./migrations/*")],
         entities: [
             User, 
             Song,
             Rating
         ]
-    })
+    });
+
+    //await conn.runMigrations();
 
     const schema = await createSchema();
 
