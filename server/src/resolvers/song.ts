@@ -1,4 +1,17 @@
-import { Arg, Ctx, FieldResolver, Int, Mutation, Query, Resolver, Root, UseMiddleware } from "type-graphql";
+import { 
+   Arg, 
+   Ctx, 
+   Field, 
+   FieldResolver, 
+   Int, 
+   Mutation, 
+   ObjectType, 
+   Query, 
+   Resolver, 
+   Root, 
+   UseMiddleware 
+} from "type-graphql";
+
 import { GraphQLUpload } from 'graphql-upload';
 import { getConnection } from 'typeorm';
 import { v4 } from 'uuid';
@@ -10,6 +23,14 @@ import { isAuth } from '../middleware/isAuth';
 import { Song } from "../entities/Song";
 import { User } from "../entities/User";
 import { Rating } from "../entities/Rating";
+
+@ObjectType()
+class PaginatedSongs {
+   @Field(() => [Song])
+   songs!: [Song];
+   @Field(() => Boolean)
+   hasMore!: boolean;
+}
 
 @Resolver(Song)
 export class SongResolver{
@@ -195,8 +216,8 @@ export class SongResolver{
       return true;
    }
 
-   @Query(() => [Song])
-   async songs() : Promise<[Song] | null > {
+   @Query(() => PaginatedSongs)
+   async songs() : Promise<PaginatedSongs> {
      
       const songs = await getConnection().query(
          `
@@ -206,16 +227,14 @@ export class SongResolver{
          `
       );
 
-      if(songs){
-         for(let i=0;i<songs.length;i++){
-            const song = songs[i];
+      for(let i=0;i<songs.length;i++){
+         const song = songs[i];
             
-            const url = `http://localhost:4000/songs/${song.name}`;
-            song.url = url;
-         }
+         const url = `http://localhost:4000/songs/${song.name}`;
+         song.url = url;
       }
-
-      return songs? songs: null;
+      
+      return { songs, hasMore: true };
    }
 
    @Mutation(() => Boolean)

@@ -1,14 +1,17 @@
 query Songs {
     songs {
-        id
-        title
-        url
-        ratingStatus
-        dislikes
-        likes
-        user {
+       hasMore
+       songs {
             id
-            username
-        }
+            title
+            url
+            ratingStatus
+            dislikes
+            likes
+            user {
+                id
+                username
+            }
+       }
     }
 }

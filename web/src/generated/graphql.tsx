@@ -18,7 +18,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
-  songs: Array<Song>;
+  songs: PaginatedSongs;
 };
 
 export type User = {
@@ -28,6 +28,12 @@ export type User = {
   email: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+};
+
+export type PaginatedSongs = {
+  __typename?: 'PaginatedSongs';
+  songs: Array<Song>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Song = {
@@ -227,14 +233,18 @@ export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SongsQuery = (
   { __typename?: 'Query' }
-  & { songs: Array<(
-    { __typename?: 'Song' }
-    & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'dislikes' | 'likes'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    ) }
-  )> }
+  & { songs: (
+    { __typename?: 'PaginatedSongs' }
+    & Pick<PaginatedSongs, 'hasMore'>
+    & { songs: Array<(
+      { __typename?: 'Song' }
+      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'dislikes' | 'likes'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ) }
+    )> }
+  ) }
 );
 
 
@@ -502,15 +512,18 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const SongsDocument = gql`
     query Songs {
   songs {
-    id
-    title
-    url
-    ratingStatus
-    dislikes
-    likes
-    user {
+    hasMore
+    songs {
       id
-      username
+      title
+      url
+      ratingStatus
+      dislikes
+      likes
+      user {
+        id
+        username
+      }
     }
   }
 }

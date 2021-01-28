@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Stack } from '@chakra-ui/react';
+import { Box, Button, IconButton, Stack } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-import { useDeleteSongMutation, useDislikeSongMutation, useLikeSongMutation, useMeQuery, useSongsQuery } from '../generated/graphql';
+
+import { 
+    useDeleteSongMutation, 
+    useDislikeSongMutation, 
+    useLikeSongMutation, 
+    useMeQuery, 
+    useSongsQuery 
+} from '../generated/graphql';
+
 import { updateAfterLike, updateAfterDisike } from '../utils/updateAfterRating';
 import { isServer } from '../utils/isServer';
 import ConfirmModal from '../components/ConfirmModal';
@@ -38,12 +46,12 @@ const Index: React.FC<{}> = ({}) => {
     <>
       <Navbar />
 
-      <Stack m='auto' mt={4} width='400px'>
+      <Stack spacing={8} width={400} m='auto'>
 
-        {!loading && data.songs?.map( ({
+        {!loading && data!.songs.songs.map( ({
            id, title, url, ratingStatus, likes, dislikes, user: { id: userId, username }
         }) => 
-            <Box key={id} my={8} p={8}>
+            <Box key={id} p={8}>
               <Box>
                 {title} posted by {username}
               </Box>
@@ -102,6 +110,12 @@ const Index: React.FC<{}> = ({}) => {
                  {dislikes}
               </Box>
             </Box>
+        )}
+
+        {!loading && data!.songs.hasMore && (
+          <Button loading={loading} mb={8}>
+             Load More
+          </Button>
         )}
 
       </Stack>
