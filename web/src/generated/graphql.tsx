@@ -234,7 +234,10 @@ export type MeQuery = (
   )> }
 );
 
-export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
+export type SongsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
 export type SongsQuery = (
@@ -516,8 +519,8 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const SongsDocument = gql`
-    query Songs {
-  songs(limit: 5, cursor: null) {
+    query Songs($limit: Int!, $cursor: String) {
+  songs(limit: $limit, cursor: $cursor) {
     hasMore
     songs {
       id
@@ -548,10 +551,12 @@ export const SongsDocument = gql`
  * @example
  * const { data, loading, error } = useSongsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
-export function useSongsQuery(baseOptions?: Apollo.QueryHookOptions<SongsQuery, SongsQueryVariables>) {
+export function useSongsQuery(baseOptions: Apollo.QueryHookOptions<SongsQuery, SongsQueryVariables>) {
         return Apollo.useQuery<SongsQuery, SongsQueryVariables>(SongsDocument, baseOptions);
       }
 export function useSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SongsQuery, SongsQueryVariables>) {

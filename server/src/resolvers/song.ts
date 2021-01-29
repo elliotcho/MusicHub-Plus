@@ -222,14 +222,20 @@ export class SongResolver{
       @Arg('cursor', () => String, { nullable: true }) cursor: string | null
    ) : Promise<PaginatedSongs> {
       const realLimit = Math.min(limit, 50);
+      let date;
+
+      if(cursor) {
+         date = new Date(parseInt(cursor));
+      }
      
       const songs = await getConnection().query(
          `
             select * from song 
-            ${cursor? `where song."createdAt" < ${cursor}`: ''}
+            ${cursor? `where song."createdAt" < $2 `: ''}
             order by song."createdAt" DESC
-            limit ${realLimit + 1}
-         `
+            limit $1
+         `, 
+          cursor? [realLimit + 1, date] : [realLimit + 1]
       );
 
       for(let i=0;i<songs.length;i++){
@@ -238,8 +244,6 @@ export class SongResolver{
          const url = `http://localhost:4000/songs/${song.name}`;
          song.url = url;
       }
-
-      console.log(songs)
 
       return { 
          hasMore: songs.length === realLimit + 1,

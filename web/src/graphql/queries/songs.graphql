@@ -1,5 +1,5 @@
-query Songs {
-    songs(limit: 5, cursor: null) {
+query Songs($limit: Int!, $cursor: String){
+    songs(limit: $limit, cursor: $cursor) {
        hasMore
        songs {
             id

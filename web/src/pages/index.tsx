@@ -17,7 +17,12 @@ import { isServer } from '../utils/isServer';
 import ConfirmModal from '../components/ConfirmModal';
 
 const Index: React.FC<{}> = ({}) => {
-  const { loading, data } = useSongsQuery();
+  const { loading, data, fetchMore, variables } = useSongsQuery({
+      variables: { 
+        limit: 5, 
+        cursor: null 
+      }
+  });
  
   const meResponse = useMeQuery({
     skip: isServer()
@@ -115,12 +120,12 @@ const Index: React.FC<{}> = ({}) => {
         {!loading && data!.songs.hasMore && (
           <Button 
             onClick = {async () => {
-              //  await fetchMore({
-              //     variables: { 
-              //       limit: variables?.limit, 
-              //       cursor: data.songs.songs[data.songs.songs.length - 1].createdAt
-              //     }
-              //  })
+               await fetchMore({
+                  variables: { 
+                    limit: variables?.limit, 
+                    cursor: data.songs.songs[data.songs.songs.length - 1].createdAt
+                  }
+               });
             }}
             loading={loading} 
             mb={8}
