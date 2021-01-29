@@ -21,6 +21,12 @@ export type Query = {
   songs: PaginatedSongs;
 };
 
+
+export type QuerySongsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
 export type User = {
   __typename?: 'User';
   id: Scalars['Float'];
@@ -238,7 +244,7 @@ export type SongsQuery = (
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
       { __typename?: 'Song' }
-      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'dislikes' | 'likes'>
+      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'dislikes' | 'likes'>
       & { user: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username'>
@@ -511,13 +517,14 @@ export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const SongsDocument = gql`
     query Songs {
-  songs {
+  songs(limit: 5, cursor: null) {
     hasMore
     songs {
       id
       title
       url
       ratingStatus
+      createdAt
       dislikes
       likes
       user {

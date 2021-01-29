@@ -217,13 +217,18 @@ export class SongResolver{
    }
 
    @Query(() => PaginatedSongs)
-   async songs() : Promise<PaginatedSongs> {
+   async songs(
+      @Arg('limit', () => Int) limit: number,
+      @Arg('cursor', () => String, { nullable: true }) cursor: string | null
+   ) : Promise<PaginatedSongs> {
+      const realLimit = Math.min(limit, 50);
      
       const songs = await getConnection().query(
          `
             select * from song 
+            ${cursor? `where song."createdAt" < ${cursor}`: ''}
             order by song."createdAt" DESC
-            limit 5
+            limit ${realLimit + 1}
          `
       );
 
@@ -233,8 +238,13 @@ export class SongResolver{
          const url = `http://localhost:4000/songs/${song.name}`;
          song.url = url;
       }
-      
-      return { songs, hasMore: true };
+
+      console.log(songs)
+
+      return { 
+         hasMore: songs.length === realLimit + 1,
+         songs: songs.slice(0, realLimit)
+      };
    }
 
    @Mutation(() => Boolean)
