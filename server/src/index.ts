@@ -27,7 +27,8 @@ const main = async () => {
         ]
     });
 
-    //await conn.runMigrations();
+    //await conn.runMigrations()
+    //await Song.delete({});
 
     const schema = await createSchema();
 
