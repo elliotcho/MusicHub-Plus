@@ -59,7 +59,7 @@ export class UserResolver{
         @Arg('newPassword') newPassword: string,
         @Ctx() { redis, req } : MyContext
     ) : Promise<UserResponse> {
-        const key = `forgot-password:${token}`;
+        const key = `${token}`;
         const uid = await redis.get(key);
 
         if(!uid){
@@ -92,7 +92,7 @@ export class UserResolver{
             return true;
         }
 
-        const token = `forgot-password:${v4()}`;
+        const token = `${v4()}`;
 
         const href = `<a href='http://localhost:3000/change-password/${token}'>Reset Password</a>`;
         const expiresIn = 1000 * 60 * 60 * 24 * 3;

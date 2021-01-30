@@ -3,7 +3,6 @@ import { Form, Formik } from 'formik';
 import { Box, Button, Heading, Input } from '@chakra-ui/react';
 import { withApollo } from '../utils/withApollo';
 import { useForgotPasswordMutation } from '../generated/graphql';
-
 import ConcertWrapper from '../components/ConcertWrapper';
 
 const ForgotPassword : React.FC<{}> = () => {
@@ -16,6 +15,10 @@ const ForgotPassword : React.FC<{}> = () => {
             <Formik
                 initialValues={{ email: '' }}
                 onSubmit ={async ({ email }) => {
+                    if(email.trim().length === 0) {
+                        return;
+                    }
+
                     await forgotPassword({
                         variables: { email }
                     });
