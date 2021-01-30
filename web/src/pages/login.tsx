@@ -1,8 +1,9 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import { withApollo } from '../utils/withApollo';
-import { Box, Button, Heading, Input } from '@chakra-ui/react';
+import { Box, Button, Heading, Input, Link } from '@chakra-ui/react';
 import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import ConcertWrapper from '../components/ConcertWrapper';
 
@@ -86,6 +87,14 @@ const Login: React.FC<{}> = ({}) => {
                             <Button type='submit' mt={4} isLoading={isSubmitting}>
                                 Login
                             </Button>
+
+                            <Box color='white'>
+                                <NextLink href='/forgot-password'>
+                                    <Link>
+                                        Forgot password?
+                                    </Link>
+                                </NextLink>
+                            </Box>
                         </Form>
                     </Box>
                 )}

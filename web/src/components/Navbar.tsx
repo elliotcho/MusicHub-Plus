@@ -6,8 +6,6 @@ import { useApolloClient } from '@apollo/client';
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
 
-interface NavbarProps {}
-
 const Navbar : React.FC<{}> = ({}) => {
     const [logout] = useLogoutMutation();
     const apolloClient = useApolloClient();

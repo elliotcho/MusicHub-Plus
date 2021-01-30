@@ -73,7 +73,7 @@ export class UserResolver{
 
         const user = await User.findOne(uid);
 
-        await User.update({id: parseInt(uid)}, {password: await argon2.hash(newPassword)});
+        await User.update({ id: parseInt(uid) }, {password: await argon2.hash(newPassword)});
         await redis.del(key);
 
         req.session.uid = parseInt(uid);
@@ -86,8 +86,8 @@ export class UserResolver{
         @Arg('email') email: string,
         @Ctx() { redis } : MyContext
     ) : Promise<Boolean> {
-        const user = await User.findOne({where : { email } });
-
+        const user = await User.findOne({ where : { email } });
+    
         if(!user){
             return true;
         }
@@ -98,8 +98,8 @@ export class UserResolver{
         const expiresIn = 1000 * 60 * 60 * 24 * 3;
 
         await redis.set(token, user.id, 'ex', expiresIn);
-
         await sendEmail(email, href);
+
         return true;
     }
 
