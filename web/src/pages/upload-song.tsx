@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import Dropzone from 'react-dropzone-uploader'
 import { Box, Button, Input } from '@chakra-ui/react';
 import { withApollo } from '../utils/withApollo';
 import { useUploadSongMutation } from '../generated/graphql';
 import ConcertWrapper from '../components/ConcertWrapper';
+import 'react-dropzone-uploader/dist/styles.css'
 
 const UploadSong: React.FC<{}> = () => {
     const [file, setFile] = useState(null);
@@ -21,13 +23,15 @@ const UploadSong: React.FC<{}> = () => {
                     placeholder='Song Title'
                     background='white'
                 />
-
-                <Input 
-                    type='file' 
-                    onChange={(e) => setFile(e.target.files[0])}
-                    background='white'
-                />
-
+                
+                <Box background='white' my={3}>
+                    <Dropzone
+                        onChangeStatus={({ file })=> setFile(file)}
+                        styles={{ dropzone: { minHeight: 200, maxHeight: 250 }}}
+                        maxFiles={1}
+                    />
+                </Box>
+               
                 <Button
                     isLoading={isLoading}
                     onClick = {async () => {

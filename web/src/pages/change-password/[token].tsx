@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Formik } from 'formik';
 import { Box, Button, Input } from '@chakra-ui/react';
 import { withApollo } from '../../utils/withApollo';
@@ -8,6 +8,7 @@ import ConcertWrapper from '../../components/ConcertWrapper';
 
 const ChangePassword: React.FC<{}> = () => {
     const router = useRouter();
+    const [tokenError, setTokenError] = useState(null);
 
     const [changePassword] = useChangePasswordMutation();
 
@@ -36,7 +37,15 @@ const ChangePassword: React.FC<{}> = () => {
 
                    if(response.data?.changePassword.user){
                        router.push('/');
-                   } 
+                   }  else {
+                       const errors = {};
+                       
+                       response.data.changePassword.errors.forEach(({ field, message }) => {
+                            errors[field] = message;
+                       });
+
+                       setTokenError(errors);
+                   }
                 }}
             >
                 {({ values, isSubmitting, handleChange }) => (
@@ -50,6 +59,12 @@ const ChangePassword: React.FC<{}> = () => {
                                 background='white'
                                 name='newPassword'
                             />
+
+                            {tokenError && tokenError.token && (
+                                <Box color='tomato'>
+                                    {tokenError.token}
+                                </Box>
+                            )}
 
                             <Button type='submit' mt={4} isLoading={isSubmitting}>
                                 Submit
