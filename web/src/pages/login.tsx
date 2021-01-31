@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
+import { toErrorMap } from '../utils/toErrorMap';
 import { withApollo } from '../utils/withApollo';
 import { Box, Button, Heading, Input, Link } from '@chakra-ui/react';
 import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
@@ -32,13 +33,7 @@ const Login: React.FC<{}> = ({}) => {
                     if(response.data.login.user){
                         router.push('/');
                     } else {
-                        const errors = {};
-
-                        response.data.login.errors.forEach(({ field, message }) => {
-                            errors[field] = message;
-                        });
-
-                        setErrors(errors);
+                        setErrors(toErrorMap(response.data.login.errors));
                     }
                 }}
             >

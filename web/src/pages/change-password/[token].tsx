@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Formik } from 'formik';
 import { Box, Button, Input } from '@chakra-ui/react';
+import { toErrorMap } from '../../utils/toErrorMap';
 import { withApollo } from '../../utils/withApollo';
 import { MeDocument, MeQuery, useChangePasswordMutation } from '../../generated/graphql';
 import { useRouter } from 'next/router';
@@ -38,13 +39,7 @@ const ChangePassword: React.FC<{}> = () => {
                    if(response.data?.changePassword.user){
                        router.push('/');
                    }  else {
-                       const errors = {};
-                       
-                       response.data.changePassword.errors.forEach(({ field, message }) => {
-                            errors[field] = message;
-                       });
-
-                       setTokenError(errors);
+                       setTokenError(toErrorMap(response.data.changePassword.errors));
                    }
                 }}
             >
