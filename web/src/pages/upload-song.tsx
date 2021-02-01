@@ -26,9 +26,16 @@ const UploadSong: React.FC<{}> = () => {
                 
                 <Box background='white' my={3}>
                     <Dropzone
-                        onChangeStatus={({ file })=> setFile(file)}
-                        styles={{ dropzone: { minHeight: 200, maxHeight: 250 }}}
                         maxFiles={1}
+                        styles={{ dropzone: { minHeight: 200, maxHeight: 250 }}}
+                        onChangeStatus={({ file }, status) => {
+                            if(status !== 'removed') {
+                                setFile(file);
+                                return;
+                            }
+
+                            setFile(null);
+                        }}
                     />
                 </Box>
                
