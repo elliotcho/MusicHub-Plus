@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Flex, Link } from '@chakra-ui/react';
+import { Box, Flex, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useApolloClient } from '@apollo/client';
@@ -43,14 +43,16 @@ const Navbar : React.FC<{}> = ({}) => {
                     </Link>
                 </NextLink>
                 
-                <Button
-                    onClick = {async () => {
+                <Link
+                    onClick = {async (e) => {
+                        e.preventDefault();
+
                         await logout();
                         await apolloClient.resetStore();
                     }}
                 >
                     Logout
-                </Button>
+                </Link>
             </>
         )
     }

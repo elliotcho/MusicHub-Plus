@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { Box, Button, IconButton, Stack } from '@chakra-ui/react';
-import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
+import { Button, Stack } from '@chakra-ui/react';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
 
 import { 
     useDeleteSongMutation, 
-    useDislikeSongMutation, 
-    useLikeSongMutation, 
-    useMeQuery, 
     useSongsQuery 
 } from '../generated/graphql';
 
-import { updateAfterLike, updateAfterDisike } from '../utils/updateAfterRating';
 import { isServer } from '../utils/isServer';
 import ConfirmModal from '../components/ConfirmModal';
+import Track from '../components/Track';
 
 const Index: React.FC<{}> = ({}) => {
   const { loading, data, fetchMore, variables } = useSongsQuery({
@@ -23,14 +19,8 @@ const Index: React.FC<{}> = ({}) => {
         cursor: null 
       }
   });
- 
-  const meResponse = useMeQuery({
-    skip: isServer()
-  });
 
   const [deleteSong] = useDeleteSongMutation();
-  const [dislikeSong] = useDislikeSongMutation();
-  const [likeSong] = useLikeSongMutation();
 
   const [isOpen, setIsOpen] = useState(false);
   const [toDelete, setToDelete] = useState(-1);
@@ -47,75 +37,34 @@ const Index: React.FC<{}> = ({}) => {
     }, true);
   }
 
+  const deleteSongCb = (id: number) => {
+      setToDelete(id);
+      setIsOpen(true);
+  }
+
   return (
     <>
       <Navbar />
 
       <Stack spacing={8} width={400} m='auto'>
 
-        {!loading && data!.songs.songs.map( ({
-           id, title, url, ratingStatus, likes, dislikes, user: { id: userId, username }
-        }) => 
-            <Box key={id} p={8}>
-              <Box>
-                {title} posted by {username}
-              </Box>
-              
-              <audio controls>
-                <source src={url}/>
-              </audio>
+        {!loading && data!.songs.songs.map(s => {
+            const { id: userId, username } = s.user;
 
-              <Box mt={4}>
-                 {meResponse.data?.me?.id === userId && (
-                     <IconButton
-                        icon = {<DeleteIcon/>}
-                        aria-label = 'Delete Song'
-                        _focus = {{outline: 'none'}}
-                        onClick = {() => {
-                           setToDelete(id);
-                           setIsOpen(true);
-                        }}
-                     />
-                 )}
-
-                 <IconButton
-                    mx = {4}
-                    icon = {<ChevronUpIcon/>}
-                    aria-label = 'Like Song'
-                    _focus = {{outline: 'none'}}
-                    colorScheme = {ratingStatus === 1? 'green' : undefined}
-                    onClick = {async () => {
-                       await likeSong({
-                         variables: { songId: id },
-                         update: (cache) => {
-                            updateAfterLike(cache, id);
-                         }
-                       });
-                    }}
-                 />
-
-                 {likes}
-
-                 <IconButton
-                    mx = {4}
-                    icon = {<ChevronDownIcon/>}
-                    aria-label = 'Disike Song'
-                    _focus = {{outline: 'none'}}
-                    colorScheme = {ratingStatus === -1? 'red' : undefined}
-                    onClick = {async () => {
-                       await dislikeSong({
-                         variables: { songId: id },
-                         update: (cache) => {
-                            updateAfterDisike(cache, id);
-                         }
-                       });
-                    }}
-                 />
-
-                 {dislikes}
-              </Box>
-            </Box>
-        )}
+            return (
+              <Track
+                songId = {s.id}
+                url = {s.url}
+                title = {s.title}
+                ratingStatus = {s.ratingStatus}
+                dislikes = {s.dislikes}
+                likes = {s.likes}
+                userId = {userId}
+                username = {username}
+                deleteSongCb = {deleteSongCb}
+              />
+            )
+        })}
 
         {!loading && data!.songs.hasMore && (
           <Button 
