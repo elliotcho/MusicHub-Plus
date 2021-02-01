@@ -16,8 +16,15 @@ interface ConfirmModalProps {
     body: string;
 }
 
-const ConfirmModal : React.FC<ConfirmModalProps> = ({ isOpen, onClose, onClick, body }) => {
-    const cancelRef = useRef();
+const ConfirmModal : React.FC<ConfirmModalProps> = ({ 
+    isOpen, 
+    onClose, 
+    onClick, 
+    body 
+}) => {
+    
+    const cancelRef = useRef();    
+    const focusStyle = { outline: 'none' };
 
     const handleConfirm = () => {
         onClick();
@@ -42,11 +49,20 @@ const ConfirmModal : React.FC<ConfirmModalProps> = ({ isOpen, onClose, onClick, 
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onClose} _focus={{outline: 'none'}}>
+                            <Button 
+                                ref={cancelRef} 
+                                onClick={onClose} 
+                                _focus={focusStyle}
+                            >
                                 Cancel
                             </Button>
 
-                            <Button colorScheme='red' onClick={handleConfirm} ml={3} _focus={{outline: 'none'}}>
+                            <Button 
+                                colorScheme='red' 
+                                onClick={handleConfirm} 
+                                _focus={focusStyle}
+                                ml={3} 
+                            >
                                 Confirm
                             </Button>
                         </AlertDialogFooter>

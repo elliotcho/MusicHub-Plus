@@ -18,10 +18,9 @@ interface TrackProps {
     ratingStatus: number;
     dislikes: number;
     likes: number;
+    deleteSong(id: number): void;
     userId: number;
     username: string;
-
-    deleteSongCb: (id: number) => void;
 }
 
 const Track: React.FC<TrackProps> = ({ 
@@ -31,10 +30,9 @@ const Track: React.FC<TrackProps> = ({
     ratingStatus, 
     likes, 
     dislikes, 
+    deleteSong,
     username, 
     userId,
-    
-    deleteSongCb
 }) => {
 
     const [dislikeSong] = useDislikeSongMutation();
@@ -59,8 +57,8 @@ const Track: React.FC<TrackProps> = ({
                      <IconButton
                         icon = {<DeleteIcon/>}
                         aria-label = 'Delete Song'
+                        onClick = {() => deleteSong(songId)}
                         _focus = {{outline: 'none'}}
-                        onClick = {() => deleteSongCb(songId)}
                      />
                  )}
 

@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import { Button, Stack } from '@chakra-ui/react';
+import { Box, Button, Stack } from '@chakra-ui/react';
 import Navbar from '../components/Navbar';
 import { withApollo } from '../utils/withApollo';
-
-import { 
-    useDeleteSongMutation, 
-    useSongsQuery 
-} from '../generated/graphql';
-
-import { isServer } from '../utils/isServer';
+import { useDeleteSongMutation, useSongsQuery } from '../generated/graphql';
+import { handlePlayEvent } from '../utils/handlePlayEvent';
 import ConfirmModal from '../components/ConfirmModal';
 import Track from '../components/Track';
 
 const Index: React.FC<{}> = ({}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [songId, setSongId] = useState(-1);
+
   const { loading, data, fetchMore, variables } = useSongsQuery({
       variables: { 
         limit: 5, 
@@ -22,25 +20,12 @@ const Index: React.FC<{}> = ({}) => {
 
   const [deleteSong] = useDeleteSongMutation();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [toDelete, setToDelete] = useState(-1);
-
-  if(!isServer()){
-    document.addEventListener('play', e => {
-      const audioList = document.getElementsByTagName('audio');
-  
-      for(let i=0;i<audioList.length;i++){
-         if(audioList[i] !== e.target) {
-            audioList[i].pause(); 
-         }
-      }
-    }, true);
-  }
-
-  const deleteSongCb = (id: number) => {
-      setToDelete(id);
+  const confirmDelete = (id: number) => {
       setIsOpen(true);
+      setSongId(id);
   }
+
+  handlePlayEvent();
 
   return (
     <>
@@ -53,53 +38,53 @@ const Index: React.FC<{}> = ({}) => {
 
             return (
               <Track
+                key = {s.id}
                 songId = {s.id}
                 url = {s.url}
                 title = {s.title}
                 ratingStatus = {s.ratingStatus}
                 dislikes = {s.dislikes}
                 likes = {s.likes}
+                deleteSong = {confirmDelete}
                 userId = {userId}
                 username = {username}
-                deleteSongCb = {deleteSongCb}
               />
             )
         })}
 
-        {!loading && data!.songs.hasMore && (
-          <Button 
-            onClick = {async () => {
-               await fetchMore({
-                  variables: { 
-                    limit: variables?.limit, 
-                    cursor: data.songs.songs[data.songs.songs.length - 1].createdAt
-                  }
-               });
+        <Box mb={8}> 
+          {!loading && data!.songs.hasMore && (
+            <Button 
+              loading={loading} 
+              onClick = {async () => {
+                const cursor = data.songs.songs[data.songs.songs.length - 1].createdAt;
+                const limit = variables?.limit;
+
+                await fetchMore({
+                  variables: { cursor, limit }
+                });
             }}
-            loading={loading} 
-            mb={8}
-          >
-             Load More
-          </Button>
-        )}
+            >
+              Load More
+            </Button>
+          )}
+        </Box>
 
       </Stack>
 
       <ConfirmModal 
          isOpen={isOpen}
-         onClick={async () => {
-            await deleteSong({
-              variables: { id: toDelete },
-              update: (cache) => {
-                cache.evict({ id: 'Song:' + toDelete });
-              }
-            });
-
-            setToDelete(-1);
-         }}
          onClose={() => setIsOpen(false)}
          body = 'Are you sure you want to delete this song?'
-      />
+         onClick={async () => {
+          await deleteSong({
+            variables: { id: songId },
+            update: (cache) => {
+              cache.evict({ id: 'Song:' + songId });
+            }
+          });
+         }}
+       />
     </> 
   )
 };
