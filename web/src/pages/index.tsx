@@ -31,7 +31,7 @@ const Index: React.FC<{}> = ({}) => {
     <>
       <Navbar />
 
-      <Stack spacing={8} width={400} m='auto'>
+      <Stack spacing={8} width={600} m='auto'>
 
         {!loading && data!.songs.songs.map(s => {
             const { id: userId, username } = s.user;

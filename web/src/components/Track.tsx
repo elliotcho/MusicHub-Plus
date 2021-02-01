@@ -43,12 +43,11 @@ const Track: React.FC<TrackProps> = ({
     });
 
     return (
-        <Box p={8}>
-            <Box>
-                {title} posted by {username}
-            </Box>
+        <Box p={8} border='solid black' my={4} borderRadius='11px'>
 
-            <audio controls>
+            <Box>{title} posted by {username}</Box>
+
+            <audio controls style={{width: '100%', margin: '10px auto'}}>
                 <source src={url}/>
             </audio>
 
@@ -98,6 +97,7 @@ const Track: React.FC<TrackProps> = ({
 
                  {dislikes}
             </Box>
+
         </Box>
     )
 }
