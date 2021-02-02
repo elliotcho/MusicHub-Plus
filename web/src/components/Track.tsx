@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton } from '@chakra-ui/react';
+import { Box, IconButton, useToast } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 
 import { 
@@ -35,6 +35,8 @@ const Track: React.FC<TrackProps> = ({
     userId,
 }) => {
 
+    const toast = useToast();
+
     const [dislikeSong] = useDislikeSongMutation();
     const [likeSong] = useLikeSongMutation();
 
@@ -68,6 +70,18 @@ const Track: React.FC<TrackProps> = ({
                     _focus = {{outline: 'none'}}
                     colorScheme = {ratingStatus === 1? 'green' : undefined}
                     onClick = {async () => {
+                       if(!meResponse?.data.me){
+                            toast({
+                                title: 'Not authenticated',
+                                description: 'Please login',
+                                status: "error",
+                                position: 'top',
+                                duration: 1000
+                            }); 
+
+                           return;
+                       } 
+
                        await likeSong({
                          variables: { songId },
                          update: (cache) => {
@@ -86,6 +100,18 @@ const Track: React.FC<TrackProps> = ({
                     _focus = {{outline: 'none'}}
                     colorScheme = {ratingStatus === -1? 'red' : undefined}
                     onClick = {async () => {
+                       if(!meResponse?.data.me){
+                          toast({
+                             title: 'Not authenticated',
+                             description: 'Please login',
+                             status: "error",
+                             position: 'top',
+                             duration: 1000
+                          });
+
+                          return;
+                       }  
+
                        await dislikeSong({
                          variables: { songId },
                          update: (cache) => {

@@ -30,7 +30,7 @@ const Index: React.FC<{}> = ({}) => {
   return (
     <ConcertWrapper>
 
-      <Stack spacing={8} width={400} m='auto'>
+      <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
         {!loading && data!.songs.songs.map(s => {
             const { id: userId, username } = s.user;
