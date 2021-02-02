@@ -53,6 +53,8 @@ const Navbar : React.FC<{}> = ({}) => {
                     onClick = {async (e) => {
                         e.preventDefault();
 
+
+
                         await logout();
                         await apolloClient.resetStore();
                     }}

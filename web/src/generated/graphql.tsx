@@ -19,10 +19,17 @@ export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
   songs: PaginatedSongs;
+  userSongs: PaginatedSongs;
 };
 
 
 export type QuerySongsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
+export type QueryUserSongsArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
@@ -273,6 +280,28 @@ export type SongsQueryVariables = Exact<{
 export type SongsQuery = (
   { __typename?: 'Query' }
   & { songs: (
+    { __typename?: 'PaginatedSongs' }
+    & Pick<PaginatedSongs, 'hasMore'>
+    & { songs: Array<(
+      { __typename?: 'Song' }
+      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'dislikes' | 'likes'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ) }
+    )> }
+  ) }
+);
+
+export type UserSongsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UserSongsQuery = (
+  { __typename?: 'Query' }
+  & { userSongs: (
     { __typename?: 'PaginatedSongs' }
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
@@ -665,3 +694,50 @@ export function useSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Song
 export type SongsQueryHookResult = ReturnType<typeof useSongsQuery>;
 export type SongsLazyQueryHookResult = ReturnType<typeof useSongsLazyQuery>;
 export type SongsQueryResult = Apollo.QueryResult<SongsQuery, SongsQueryVariables>;
+export const UserSongsDocument = gql`
+    query UserSongs($limit: Int!, $cursor: String) {
+  userSongs(limit: $limit, cursor: $cursor) {
+    hasMore
+    songs {
+      id
+      title
+      url
+      ratingStatus
+      createdAt
+      dislikes
+      likes
+      user {
+        id
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserSongsQuery__
+ *
+ * To run a query within a React component, call `useUserSongsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserSongsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserSongsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useUserSongsQuery(baseOptions: Apollo.QueryHookOptions<UserSongsQuery, UserSongsQueryVariables>) {
+        return Apollo.useQuery<UserSongsQuery, UserSongsQueryVariables>(UserSongsDocument, baseOptions);
+      }
+export function useUserSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserSongsQuery, UserSongsQueryVariables>) {
+          return Apollo.useLazyQuery<UserSongsQuery, UserSongsQueryVariables>(UserSongsDocument, baseOptions);
+        }
+export type UserSongsQueryHookResult = ReturnType<typeof useUserSongsQuery>;
+export type UserSongsLazyQueryHookResult = ReturnType<typeof useUserSongsLazyQuery>;
+export type UserSongsQueryResult = Apollo.QueryResult<UserSongsQuery, UserSongsQueryVariables>;

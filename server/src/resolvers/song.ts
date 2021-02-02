@@ -27,7 +27,7 @@ import { Rating } from "../entities/Rating";
 @ObjectType()
 class PaginatedSongs {
    @Field(() => [Song])
-   songs!: [Song];
+   songs!: [Song] | [];
    @Field(() => Boolean)
    hasMore!: boolean;
 }
@@ -232,6 +232,48 @@ export class SongResolver{
          `
             select * from song 
             ${cursor? `where song."createdAt" < $2 `: ''}
+            order by song."createdAt" DESC
+            limit $1
+         `, 
+          cursor? [realLimit + 1, date] : [realLimit + 1]
+      );
+
+      for(let i=0;i<songs.length;i++){
+         const song = songs[i];
+            
+         const url = `http://localhost:4000/songs/${song.name}`;
+         song.url = url;
+      }
+
+      return { 
+         hasMore: songs.length === realLimit + 1,
+         songs: songs.slice(0, realLimit)
+      };
+   }
+
+   @Query(() => PaginatedSongs)
+   async userSongs(
+      @Arg('limit', () => Int) limit: number,
+      @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
+      @Ctx() { req } : MyContext
+   ) : Promise<PaginatedSongs> {
+      const { uid } = req.session;
+      const realLimit = Math.min(limit, 50);
+      let date;
+
+      if(!uid) {
+         return { songs: [], hasMore: false }
+      }
+
+      if(cursor) {
+         date = new Date(parseInt(cursor));
+      }
+     
+      const songs = await getConnection().query(
+         `
+            select * from song 
+            where song.uid = ${uid}
+            ${cursor? `and song."createdAt" < $2 `: ''}
             order by song."createdAt" DESC
             limit $1
          `, 
