@@ -43,7 +43,7 @@ const Track: React.FC<TrackProps> = ({
     });
 
     return (
-        <Box p={8} border='solid black' my={4} borderRadius='11px'>
+        <Box p={8} border='solid black' background='white' my={4} borderRadius='11px'>
 
             <Box>{title} posted by {username}</Box>
 

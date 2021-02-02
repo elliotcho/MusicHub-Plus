@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Stack } from '@chakra-ui/react';
-import Navbar from '../components/Navbar';
+import ConcertWrapper from '../components/ConcertWrapper';
 import { withApollo } from '../utils/withApollo';
 import { useDeleteSongMutation, useSongsQuery } from '../generated/graphql';
 import { handlePlayEvent } from '../utils/handlePlayEvent';
@@ -28,10 +28,9 @@ const Index: React.FC<{}> = ({}) => {
   handlePlayEvent();
 
   return (
-    <>
-      <Navbar />
+    <ConcertWrapper>
 
-      <Stack spacing={8} width={600} m='auto'>
+      <Stack spacing={8} width={400} m='auto'>
 
         {!loading && data!.songs.songs.map(s => {
             const { id: userId, username } = s.user;
@@ -85,7 +84,8 @@ const Index: React.FC<{}> = ({}) => {
           });
          }}
        />
-    </> 
+       
+    </ConcertWrapper> 
   )
 };
 

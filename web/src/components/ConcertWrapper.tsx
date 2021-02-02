@@ -18,6 +18,7 @@ const ConcertWrapper: React.FC<ConcertLayoutProps> = ({ children, gradient = und
         bgImage: `${bgGradient}, url('/concert.jpg')`,
         bgRepeat: "no-repeat",
         bgPosition: "center",
+        overflow: "auto",
         align: "center"
     }
 

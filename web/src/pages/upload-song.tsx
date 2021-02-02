@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone-uploader'
-import { Box, Button, Input } from '@chakra-ui/react';
+import { Box, Button, Input, useToast } from '@chakra-ui/react';
 import { withApollo } from '../utils/withApollo';
 import { useUploadSongMutation } from '../generated/graphql';
 import ConcertWrapper from '../components/ConcertWrapper';
 import 'react-dropzone-uploader/dist/styles.css'
 
 const UploadSong: React.FC<{}> = () => {
+    const toast = useToast();
+
+    const [isLoading, setIsLoading] = useState(false);
     const [file, setFile] = useState(null);
     const [title, setTitle] = useState('');
 
-    const [isLoading, setIsLoading] = useState(false);
-  
     const [upload] = useUploadSongMutation();
 
     return (
@@ -42,13 +43,37 @@ const UploadSong: React.FC<{}> = () => {
                 <Button
                     isLoading={isLoading}
                     onClick = {async () => {
-                        setIsLoading(true);
+                        
+                        if(title.trim().length === 0){
+                            toast({
+                                title: 'Title cannot be blank',
+                                description: 'Please try again',
+                                status: "error",
+                                position: 'top',
+                                duration: 1000
+                            });
 
-                        await upload({
-                            variables: { file, title }
-                        });
+                            return;
+                        }
+
+                        if(!file){
+                            toast({
+                                title: 'Missing audio file',
+                                description: 'Please try again',
+                                status: "error",
+                                position: 'top',
+                                duration: 1000
+                            });
+
+                            return;
+                        }
+
+                        setIsLoading(true);
+                        
+                        await upload({ variables: { file, title } });
 
                         window.location.reload();
+
                     }}
                 >
                     Submit
