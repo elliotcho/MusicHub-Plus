@@ -41,6 +41,7 @@ const Index: React.FC<{}> = ({}) => {
                 songId = {s.id}
                 url = {s.url}
                 title = {s.title}
+                createdAt = {s.createdAt}
                 ratingStatus = {s.ratingStatus}
                 dislikes = {s.dislikes}
                 likes = {s.likes}
@@ -55,6 +56,7 @@ const Index: React.FC<{}> = ({}) => {
           {!loading && data!.songs.hasMore && (
             <Button 
               loading={loading} 
+              _focus={{ outline: 'none' }}
               onClick = {async () => {
                 const cursor = data.songs.songs[data.songs.songs.length - 1].createdAt;
                 const limit = variables?.limit;

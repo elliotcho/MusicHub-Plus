@@ -43,6 +43,7 @@ const Profile: React.FC<{}> = () => {
                             songId = {s.id}
                             url = {s.url}
                             title = {s.title}
+                            createdAt ={s.createdAt}
                             ratingStatus = {s.ratingStatus}
                             dislikes = {s.dislikes}
                             likes = {s.likes}
@@ -56,15 +57,16 @@ const Profile: React.FC<{}> = () => {
                     <Box mb={8}> 
                     {!loading && data!.userSongs.hasMore && (
                         <Button 
-                        loading={loading} 
-                        onClick = {async () => {
-                            const cursor = data.userSongs.songs[data.userSongs.songs.length - 1].createdAt;
-                            const limit = variables?.limit;
+                            loading={loading} 
+                            _focus={{ outline: 'none' }}
+                            onClick = {async () => {
+                                const cursor = data.userSongs.songs[data.userSongs.songs.length - 1].createdAt;
+                                const limit = variables?.limit;
 
-                            await fetchMore({
-                            variables: { cursor, limit }
-                            });
-                        }}
+                                await fetchMore({
+                                variables: { cursor, limit }
+                                });
+                            }}
                         >
                         Load More
                         </Button>
@@ -78,12 +80,12 @@ const Profile: React.FC<{}> = () => {
                     onClose={() => setIsOpen(false)}
                     body = 'Are you sure you want to delete this song?'
                     onClick={async () => {
-                    await deleteSong({
-                        variables: { id: songId },
-                        update: (cache) => {
-                        cache.evict({ id: 'Song:' + songId });
-                        }
-                    });
+                        await deleteSong({
+                            variables: { id: songId },
+                            update: (cache) => {
+                            cache.evict({ id: 'Song:' + songId });
+                            }
+                        });
                     }}
                 />
             

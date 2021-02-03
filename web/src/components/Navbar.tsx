@@ -38,22 +38,21 @@ const Navbar : React.FC<{}> = ({}) => {
         body = (
             <>
                 <NextLink href = '/profile'>
-                    <Link mr={3}>
+                    <Link mr={4}>
                         Profile
                     </Link>
                 </NextLink>
 
                 <NextLink href = '/upload-song'>
-                    <Link mr={3}>
+                    <Link>
                         Upload
                     </Link>
                 </NextLink>
                 
                 <Link
+                    ml={4}
                     onClick = {async (e) => {
                         e.preventDefault();
-
-
 
                         await logout();
                         await apolloClient.resetStore();

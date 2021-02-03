@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton, useToast } from '@chakra-ui/react';
+import { Box, Flex, IconButton, useToast } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
 
 import { 
@@ -15,6 +15,7 @@ interface TrackProps {
     songId: number;
     url: string;
     title: string;
+    createdAt: string;
     ratingStatus: number;
     dislikes: number;
     likes: number;
@@ -27,6 +28,7 @@ const Track: React.FC<TrackProps> = ({
     songId, 
     url, 
     title, 
+    createdAt,
     ratingStatus, 
     likes, 
     dislikes, 
@@ -47,7 +49,13 @@ const Track: React.FC<TrackProps> = ({
     return (
         <Box p={8} border='solid black' background='white' my={4} borderRadius='11px'>
 
-            <Box>{title} posted by {username}</Box>
+            <Flex>
+                <Box>{title} posted by {username}</Box>
+
+                <Box ml='auto'>
+                    {(new Date(parseInt(createdAt))).toLocaleString()}
+                </Box>
+            </Flex>
 
             <audio controls style={{width: '100%', margin: '10px auto'}}>
                 <source src={url}/>
