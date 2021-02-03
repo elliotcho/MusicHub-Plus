@@ -4,6 +4,7 @@ import { Box, Button, Input, useToast } from '@chakra-ui/react';
 import { withApollo } from '../utils/withApollo';
 import { useUploadSongMutation } from '../generated/graphql';
 import ConcertWrapper from '../components/ConcertWrapper';
+import AuthWrapper from '../components/AuthWrapper';
 import 'react-dropzone-uploader/dist/styles.css'
 
 const UploadSong: React.FC<{}> = () => {
@@ -16,70 +17,72 @@ const UploadSong: React.FC<{}> = () => {
     const [upload] = useUploadSongMutation();
 
     return (
-        <ConcertWrapper>
-            <Box m='auto' width='400px'>
-                <Input 
-                    type='text' 
-                    onChange={(e) => setTitle(e.target.value)} 
-                    placeholder='Song Title'
-                    background='white'
-                />
+        <AuthWrapper requiresAuth>
+            <ConcertWrapper>
+                <Box m='auto' width='400px'>
+                    <Input 
+                        type='text' 
+                        onChange={(e) => setTitle(e.target.value)} 
+                        placeholder='Song Title'
+                        background='white'
+                    />
+                    
+                    <Box background='white' my={3}>
+                        <Dropzone
+                            maxFiles={1}
+                            styles={{ dropzone: { minHeight: 200, maxHeight: 250 }}}
+                            onChangeStatus={({ file }, status) => {
+                                if(status !== 'removed') {
+                                    setFile(file);
+                                    return;
+                                }
+
+                                setFile(null);
+                            }}
+                        />
+                    </Box>
                 
-                <Box background='white' my={3}>
-                    <Dropzone
-                        maxFiles={1}
-                        styles={{ dropzone: { minHeight: 200, maxHeight: 250 }}}
-                        onChangeStatus={({ file }, status) => {
-                            if(status !== 'removed') {
-                                setFile(file);
+                    <Button
+                        isLoading={isLoading}
+                        onClick = {async () => {
+                            
+                            if(title.trim().length === 0){
+                                toast({
+                                    title: 'Title cannot be blank',
+                                    description: 'Please try again',
+                                    status: "error",
+                                    position: 'top',
+                                    duration: 1000
+                                });
+
                                 return;
                             }
 
-                            setFile(null);
+                            if(!file){
+                                toast({
+                                    title: 'Missing audio file',
+                                    description: 'Please try again',
+                                    status: "error",
+                                    position: 'top',
+                                    duration: 1000
+                                });
+
+                                return;
+                            }
+
+                            setIsLoading(true);
+                            
+                            await upload({ variables: { file, title } });
+
+                            window.location.reload();
+
                         }}
-                    />
+                    >
+                        Submit
+                    </Button>
                 </Box>
-               
-                <Button
-                    isLoading={isLoading}
-                    onClick = {async () => {
-                        
-                        if(title.trim().length === 0){
-                            toast({
-                                title: 'Title cannot be blank',
-                                description: 'Please try again',
-                                status: "error",
-                                position: 'top',
-                                duration: 1000
-                            });
-
-                            return;
-                        }
-
-                        if(!file){
-                            toast({
-                                title: 'Missing audio file',
-                                description: 'Please try again',
-                                status: "error",
-                                position: 'top',
-                                duration: 1000
-                            });
-
-                            return;
-                        }
-
-                        setIsLoading(true);
-                        
-                        await upload({ variables: { file, title } });
-
-                        window.location.reload();
-
-                    }}
-                >
-                    Submit
-                </Button>
-            </Box>
-        </ConcertWrapper>
+            </ConcertWrapper>
+        </AuthWrapper>
     )
 }
 

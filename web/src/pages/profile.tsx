@@ -29,8 +29,9 @@ const Profile: React.FC<{}> = () => {
     handlePlayEvent();
 
     return (
-        <ConcertWrapper>
-            <AuthWrapper requiresAuth>
+        <AuthWrapper requiresAuth>
+            <ConcertWrapper>
+
                 <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
                     {!loading && data!.userSongs.songs.map(s => {
@@ -85,8 +86,9 @@ const Profile: React.FC<{}> = () => {
                     });
                     }}
                 />
-            </AuthWrapper>
-        </ConcertWrapper> 
+            
+            </ConcertWrapper> 
+        </AuthWrapper>
     )
 }
 
