@@ -36,7 +36,7 @@ const Profile: React.FC<{}> = () => {
                 <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
                     {!loading && data!.userSongs.songs.map(s => 
-                        <Track {...mapTrackProps(s)} />
+                        <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
                     )}
 
                     <Box mb={8}> 
@@ -49,7 +49,7 @@ const Profile: React.FC<{}> = () => {
                                 const limit = variables?.limit;
 
                                 await fetchMore({
-                                variables: { cursor, limit }
+                                    variables: { cursor, limit }
                                 });
                             }}
                         >

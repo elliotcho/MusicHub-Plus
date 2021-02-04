@@ -1,0 +1,13 @@
+fragment SongSnippet on Song {
+    id
+    title
+    url
+    ratingStatus
+    createdAt
+    dislikes
+    likes
+    user {
+        id
+        username
+    }
+}

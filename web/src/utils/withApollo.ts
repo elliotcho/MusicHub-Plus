@@ -36,6 +36,36 @@ const client = (ctx: NextPageContext) => (
                                     ]
                                 }
                             }
+                        },
+                        userSongs: {
+                            keyArgs: ['PaginatedSongs'],
+                            merge(
+                                existing: PaginatedSongs | undefined,
+                                incoming: PaginatedSongs
+                            ) : PaginatedSongs {
+                                return {
+                                    ...incoming,
+                                    songs: [
+                                        ...(existing?.songs || []),
+                                        ...incoming.songs
+                                    ]
+                                }
+                            }
+                        },
+                        trendingSongs: {
+                            keyArgs: ['PaginatedSongs'],
+                            merge(
+                                existing: PaginatedSongs | undefined,
+                                incoming: PaginatedSongs
+                            ) : PaginatedSongs {
+                                return {
+                                    ...incoming,
+                                    songs: [
+                                        ...(existing?.songs || []),
+                                        ...incoming.songs
+                                    ]
+                                }
+                            }
                         }
                     }
                 }

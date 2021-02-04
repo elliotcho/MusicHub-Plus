@@ -34,7 +34,7 @@ const Index: React.FC<{}> = ({}) => {
       <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
         {!loading && data!.songs.songs.map(s => 
-           <Track {...mapTrackProps(s)} />
+           <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
         )}
 
         <Box mb={8}> 

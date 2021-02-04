@@ -2,17 +2,7 @@ query Songs($limit: Int!, $cursor: String){
     songs(limit: $limit, cursor: $cursor) {
        hasMore
        songs {
-            id
-            title
-            url
-            ratingStatus
-            createdAt
-            dislikes
-            likes
-            user {
-                id
-                username
-            }
+           ...SongSnippet
        }
     }
 }

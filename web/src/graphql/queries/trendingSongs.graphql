@@ -1,0 +1,8 @@
+query trendingSongs($limit: Int!, $cursor: String){
+    trendingSongs(limit: $limit, cursor: $cursor) {
+       hasMore
+       songs {
+            ...SongSnippet
+       }
+    }
+}

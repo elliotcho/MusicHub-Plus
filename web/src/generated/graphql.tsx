@@ -20,6 +20,7 @@ export type Query = {
   me?: Maybe<User>;
   songs: PaginatedSongs;
   userSongs: PaginatedSongs;
+  trendingSongs: PaginatedSongs;
 };
 
 
@@ -30,6 +31,12 @@ export type QuerySongsArgs = {
 
 
 export type QueryUserSongsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
+export type QueryTrendingSongsArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
@@ -142,6 +149,15 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
+
+export type SongSnippetFragment = (
+  { __typename?: 'Song' }
+  & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'dislikes' | 'likes'>
+  & { user: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username'>
+  ) }
+);
 
 export type ChangePasswordMutationVariables = Exact<{
   newPassword: Scalars['String'];
@@ -284,11 +300,25 @@ export type SongsQuery = (
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
       { __typename?: 'Song' }
-      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'updatedAt' | 'dislikes' | 'likes'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ) }
+      & SongSnippetFragment
+    )> }
+  ) }
+);
+
+export type TrendingSongsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type TrendingSongsQuery = (
+  { __typename?: 'Query' }
+  & { trendingSongs: (
+    { __typename?: 'PaginatedSongs' }
+    & Pick<PaginatedSongs, 'hasMore'>
+    & { songs: Array<(
+      { __typename?: 'Song' }
+      & SongSnippetFragment
     )> }
   ) }
 );
@@ -306,16 +336,26 @@ export type UserSongsQuery = (
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
       { __typename?: 'Song' }
-      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'dislikes' | 'likes'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ) }
+      & SongSnippetFragment
     )> }
   ) }
 );
 
-
+export const SongSnippetFragmentDoc = gql`
+    fragment SongSnippet on Song {
+  id
+  title
+  url
+  ratingStatus
+  createdAt
+  dislikes
+  likes
+  user {
+    id
+    username
+  }
+}
+    `;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($newPassword: String!, $token: String!) {
   changePassword(newPassword: $newPassword, token: $token) {
@@ -652,22 +692,11 @@ export const SongsDocument = gql`
   songs(limit: $limit, cursor: $cursor) {
     hasMore
     songs {
-      id
-      title
-      url
-      ratingStatus
-      createdAt
-      updatedAt
-      dislikes
-      likes
-      user {
-        id
-        username
-      }
+      ...SongSnippet
     }
   }
 }
-    `;
+    ${SongSnippetFragmentDoc}`;
 
 /**
  * __useSongsQuery__
@@ -695,26 +724,53 @@ export function useSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Song
 export type SongsQueryHookResult = ReturnType<typeof useSongsQuery>;
 export type SongsLazyQueryHookResult = ReturnType<typeof useSongsLazyQuery>;
 export type SongsQueryResult = Apollo.QueryResult<SongsQuery, SongsQueryVariables>;
+export const TrendingSongsDocument = gql`
+    query trendingSongs($limit: Int!, $cursor: String) {
+  trendingSongs(limit: $limit, cursor: $cursor) {
+    hasMore
+    songs {
+      ...SongSnippet
+    }
+  }
+}
+    ${SongSnippetFragmentDoc}`;
+
+/**
+ * __useTrendingSongsQuery__
+ *
+ * To run a query within a React component, call `useTrendingSongsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTrendingSongsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTrendingSongsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useTrendingSongsQuery(baseOptions: Apollo.QueryHookOptions<TrendingSongsQuery, TrendingSongsQueryVariables>) {
+        return Apollo.useQuery<TrendingSongsQuery, TrendingSongsQueryVariables>(TrendingSongsDocument, baseOptions);
+      }
+export function useTrendingSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TrendingSongsQuery, TrendingSongsQueryVariables>) {
+          return Apollo.useLazyQuery<TrendingSongsQuery, TrendingSongsQueryVariables>(TrendingSongsDocument, baseOptions);
+        }
+export type TrendingSongsQueryHookResult = ReturnType<typeof useTrendingSongsQuery>;
+export type TrendingSongsLazyQueryHookResult = ReturnType<typeof useTrendingSongsLazyQuery>;
+export type TrendingSongsQueryResult = Apollo.QueryResult<TrendingSongsQuery, TrendingSongsQueryVariables>;
 export const UserSongsDocument = gql`
     query UserSongs($limit: Int!, $cursor: String) {
   userSongs(limit: $limit, cursor: $cursor) {
     hasMore
     songs {
-      id
-      title
-      url
-      ratingStatus
-      createdAt
-      dislikes
-      likes
-      user {
-        id
-        username
-      }
+      ...SongSnippet
     }
   }
 }
-    `;
+    ${SongSnippetFragmentDoc}`;
 
 /**
  * __useUserSongsQuery__
