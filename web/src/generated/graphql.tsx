@@ -284,7 +284,7 @@ export type SongsQuery = (
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
       { __typename?: 'Song' }
-      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'dislikes' | 'likes'>
+      & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'updatedAt' | 'dislikes' | 'likes'>
       & { user: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username'>
@@ -657,6 +657,7 @@ export const SongsDocument = gql`
       url
       ratingStatus
       createdAt
+      updatedAt
       dislikes
       likes
       user {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { withApollo } from '../utils/withApollo';
 import ConcertWrapper from '../components/ConcertWrapper';
 import { useDeleteSongMutation, useUserSongsQuery } from '../generated/graphql';
+import { mapTrackProps } from '../utils/mapTrackProps';
 import { handlePlayEvent } from '../utils/handlePlayEvent';
 import { Box, Button, Stack } from '@chakra-ui/react';
 import Track from '../components/Track';
@@ -34,25 +35,9 @@ const Profile: React.FC<{}> = () => {
 
                 <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
-                    {!loading && data!.userSongs.songs.map(s => {
-                        const { id: userId, username } = s.user;
-
-                        return (
-                        <Track
-                            key = {s.id}
-                            songId = {s.id}
-                            url = {s.url}
-                            title = {s.title}
-                            createdAt ={s.createdAt}
-                            ratingStatus = {s.ratingStatus}
-                            dislikes = {s.dislikes}
-                            likes = {s.likes}
-                            deleteSong = {confirmDelete}
-                            userId = {userId}
-                            username = {username}
-                        />
-                        )
-                    })}
+                    {!loading && data!.userSongs.songs.map(s => 
+                        <Track {...mapTrackProps(s)} />
+                    )}
 
                     <Box mb={8}> 
                     {!loading && data!.userSongs.hasMore && (
