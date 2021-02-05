@@ -37,15 +37,27 @@ const Navbar : React.FC<{}> = ({}) => {
     else{
         body = (
             <>
-                <NextLink href = '/profile'>
-                    <Link mr={4}>
-                        Profile
+                <NextLink href = '/trending'>
+                    <Link>
+                        Trending
                     </Link>
                 </NextLink>
 
                 <NextLink href = '/upload-song'>
-                    <Link>
+                    <Link ml={4}>
                         Upload
+                    </Link>
+                </NextLink>
+
+                <NextLink href = '/profile'>
+                    <Link ml={4}>
+                        Profile
+                    </Link>
+                </NextLink>
+
+                <NextLink href = '/settings'>
+                    <Link ml={4}>
+                        Settings
                     </Link>
                 </NextLink>
                 

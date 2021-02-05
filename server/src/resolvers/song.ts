@@ -304,8 +304,8 @@ export class SongResolver{
          `
             select * from song 
             order by song.likes - song.dislikes DESC
-            offset ${cursor} rows
             limit ${realLimit + 1}
+            offset ${cursor} rows
          `
       );
 
