@@ -37,7 +37,7 @@ export type QueryUserSongsArgs = {
 
 
 export type QueryTrendingSongsArgs = {
-  cursor?: Maybe<Scalars['String']>;
+  cursor?: Maybe<Scalars['Int']>;
   limit: Scalars['Int'];
 };
 
@@ -307,7 +307,7 @@ export type SongsQuery = (
 
 export type TrendingSongsQueryVariables = Exact<{
   limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['String']>;
+  cursor: Scalars['Int'];
 }>;
 
 
@@ -725,7 +725,7 @@ export type SongsQueryHookResult = ReturnType<typeof useSongsQuery>;
 export type SongsLazyQueryHookResult = ReturnType<typeof useSongsLazyQuery>;
 export type SongsQueryResult = Apollo.QueryResult<SongsQuery, SongsQueryVariables>;
 export const TrendingSongsDocument = gql`
-    query trendingSongs($limit: Int!, $cursor: String) {
+    query trendingSongs($limit: Int!, $cursor: Int!) {
   trendingSongs(limit: $limit, cursor: $cursor) {
     hasMore
     songs {

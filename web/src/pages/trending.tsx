@@ -9,13 +9,14 @@ import ConfirmModal from '../components/ConfirmModal';
 import Track from '../components/Track';
 
 const Trending : React.FC<{}> = () => {
+    const [cursor, setCursor] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [songId, setSongId] = useState(-1);
 
     const { loading, data, fetchMore, variables } = useTrendingSongsQuery({
         variables: { 
             limit: 5, 
-            cursor: null 
+            cursor: 0 
         }
     });
 
@@ -43,12 +44,13 @@ const Trending : React.FC<{}> = () => {
                         loading={loading} 
                         _focus={{ outline: 'none' }}
                         onClick = {async () => {
-                            const cursor = data.trendingSongs.songs[data.trendingSongs.songs.length - 1].createdAt;
                             const limit = variables?.limit;
 
                             await fetchMore({
-                                variables: { cursor, limit }
+                                variables: { cursor: cursor + 5, limit }
                             });
+
+                            setCursor(cursor + 5);
                         }}
                     >
                         Load More
