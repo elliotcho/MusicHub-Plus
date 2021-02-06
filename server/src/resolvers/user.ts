@@ -90,7 +90,7 @@ export class UserResolver{
             return {
                 errors: [{
                     field: 'email',
-                    message: 'Email taken by another user'
+                    message: 'Username taken by another user'
                 }]
             };
         }

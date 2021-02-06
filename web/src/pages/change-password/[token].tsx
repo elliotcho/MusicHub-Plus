@@ -4,9 +4,8 @@ import { Box, Button, Input } from '@chakra-ui/react';
 import { toErrorMap } from '../../utils/toErrorMap';
 import { withApollo } from '../../utils/withApollo';
 import { MeDocument, MeQuery, useChangePasswordMutation } from '../../generated/graphql';
-import { useRouter } from 'next/router';
 import ConcertWrapper from '../../components/ConcertWrapper';
-import AuthWrapper from '../../components/AuthWrapper';
+import { useRouter } from 'next/router';
 
 const ChangePassword: React.FC<{}> = () => {
     const router = useRouter();
@@ -15,11 +14,10 @@ const ChangePassword: React.FC<{}> = () => {
     const [changePassword] = useChangePasswordMutation();
 
     return(
-        <AuthWrapper>
-            <ConcertWrapper>
-                <Formik
-                    initialValues={{ newPassword: '' }}
-                    onSubmit ={async ({ newPassword }) => {
+        <ConcertWrapper>
+            <Formik
+                initialValues={{ newPassword: '' }}
+                onSubmit ={async ({ newPassword }) => {
                     const { token }= router.query;
 
                     const response = await changePassword({
@@ -69,9 +67,8 @@ const ChangePassword: React.FC<{}> = () => {
                             </Form>
                         </Box>
                     )}
-                </Formik>
-            </ConcertWrapper>
-        </AuthWrapper>
+            </Formik>
+        </ConcertWrapper>
     )
 }
 
