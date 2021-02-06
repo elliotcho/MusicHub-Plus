@@ -1,10 +1,11 @@
 import argon2 from 'argon2';
 import { User } from '../entities/User';
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import { MyContext } from '../types';
 import { v4 } from 'uuid';
 import { sendEmail } from '../utils/sendEmail';
+import { isAuth } from '../middleware/isAuth';
 
 @InputType()
 class RegisterInput{
@@ -54,6 +55,29 @@ export class UserResolver{
     }
 
     @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async changeEmail(
+        @Arg('newEmail') newEmail: string,
+        @Ctx() { req } : MyContext
+    ) : Promise<UserResponse> {
+        const user = await User.findOne({ where: { email: newEmail } });
+        const { uid } = req.session;
+
+        if(user && user?.id !== uid) {
+            return {
+                errors: [{
+                    field: 'email',
+                    message: 'Email taken by another user'
+                }]
+            };
+        }
+        
+        await User.update({ id: uid }, { email: newEmail });
+  
+        return { user };
+    }
+
+    @Mutation(() => UserResponse)
     async changePassword(
         @Arg('token') token: string,
         @Arg('newPassword') newPassword: string,
@@ -73,7 +97,7 @@ export class UserResolver{
 
         const user = await User.findOne(uid);
 
-        await User.update({ id: parseInt(uid) }, {password: await argon2.hash(newPassword)});
+        await User.update({ id: parseInt(uid) }, { password: await argon2.hash(newPassword) });
         await redis.del(key);
 
         req.session.uid = parseInt(uid);
