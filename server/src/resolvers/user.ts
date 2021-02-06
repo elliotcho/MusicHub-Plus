@@ -74,7 +74,30 @@ export class UserResolver{
         
         await User.update({ id: uid }, { email: newEmail });
   
-        return { user };
+        return { user: await User.findOne(uid) };
+    }
+
+    @Mutation(() => UserResponse)
+    @UseMiddleware(isAuth)
+    async changeUsername(
+        @Arg('newUsername') newUsername: string,
+        @Ctx() { req } : MyContext
+    ) : Promise<UserResponse> {
+        const user = await User.findOne({ where: { username: newUsername } });
+        const { uid } = req.session;
+
+        if(user && user?.id !== uid) {
+            return {
+                errors: [{
+                    field: 'email',
+                    message: 'Email taken by another user'
+                }]
+            };
+        }
+        
+        await User.update({ id: uid }, { username: newUsername });
+  
+        return { user: await User.findOne(uid) };
     }
 
     @Mutation(() => UserResponse)

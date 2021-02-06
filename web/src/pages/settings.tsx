@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Heading, Input } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import { useChangeEmailMutation } from '../generated/graphql';
+import { useChangeEmailMutation, useChangeUsernameMutation } from '../generated/graphql';
 import { withApollo } from '../utils/withApollo';
 import ConcertWrapper from '../components/ConcertWrapper';
 import AuthWrapper from '../components/AuthWrapper';
@@ -10,7 +10,8 @@ import ConfirmModal from '../components/ConfirmModal';
 const Settings: React.FC<{}> = () => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const [changeEmail] = useChangeEmailMutation()
+    const [changeEmail] = useChangeEmailMutation();
+    const [changeUsername] = useChangeUsernameMutation();
 
     return (
         <AuthWrapper requiresAuth>
@@ -50,8 +51,12 @@ const Settings: React.FC<{}> = () => {
                     <Heading color='white'>Update username?</Heading>
                     <Formik
                         initialValues = {{ newUsername: '' }}
-                        onSubmit = {async () => {
+                        onSubmit = {async ({ newUsername }) => {
+                            const response = await changeUsername({
+                                variables: { newUsername }
+                            });
 
+                            console.log(response)
                         }}
                     >
                         {({ values, isSubmitting, handleChange }) => (
@@ -67,7 +72,7 @@ const Settings: React.FC<{}> = () => {
                                     />
                                 </Box>
 
-                                <Button isLoading={isSubmitting} colorScheme='green'>
+                                <Button type='submit' isLoading={isSubmitting} colorScheme='green'>
                                     Submit
                                 </Button>
                             </Form>
