@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Formik } from 'formik';
-import { Box, Button, Heading, Input } from '@chakra-ui/react';
+import { Box, Button, FormLabel, Heading, Input } from '@chakra-ui/react';
 import { useChangeUsernameMutation } from '../generated/graphql';
 
 const ChangeUsernameForm: React.FC<{}> = () => {
@@ -8,8 +8,6 @@ const ChangeUsernameForm: React.FC<{}> = () => {
 
     return (
         <>
-            <Heading color='white'>Update username?</Heading>
-            
             <Formik
                 initialValues = {{ newUsername: '' }}
                 onSubmit = {async ({ newUsername }, { setValues }) => {
@@ -22,7 +20,9 @@ const ChangeUsernameForm: React.FC<{}> = () => {
             >
                 {({ values, isSubmitting, handleChange }) => (
                     <Form>
-                        <Box mb={4}>
+                        <Heading color='white'>Update username?</Heading>
+
+                        <Box my={4}>
                             <Input
                                 type = 'text'
                                 placeholder = 'New Username'

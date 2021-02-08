@@ -35,7 +35,9 @@ export class Song extends BaseEntity {
     uid: number;
 
     @Field(() => User)
-    @ManyToOne(() => User, (user) => user.songs)
+    @ManyToOne(() => User, (user) => user.songs, {
+        onDelete: 'CASCADE'
+    })
     user: User;
 
     @Field(() => Int, { nullable: true })

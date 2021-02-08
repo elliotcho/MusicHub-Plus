@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useApolloClient } from '@apollo/client';
 import { Box, Button, Link, Stack } from '@chakra-ui/react';
+import { useDeleteAccountMutation } from '../generated/graphql';
 import { withApollo } from '../utils/withApollo';
 import ConcertWrapper from '../components/ConcertWrapper';
 import AuthWrapper from '../components/AuthWrapper';
@@ -10,6 +12,10 @@ import NextLink from 'next/link';
 
 const Settings: React.FC<{}> = () => {
     const [isOpen, setIsOpen] = useState(false);
+
+    const [deleteAccount] = useDeleteAccountMutation();
+
+    const apolloClient = useApolloClient();
 
     return (
         <AuthWrapper requiresAuth>
@@ -42,7 +48,8 @@ const Settings: React.FC<{}> = () => {
                     onClose={() => setIsOpen(false)}
                     body = 'Are you sure you want to delete your account?'
                     onClick={async () => {
-         
+                        await deleteAccount();
+                        await apolloClient.resetStore();
                     }}
                 />
             </ConcertWrapper>

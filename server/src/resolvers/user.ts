@@ -54,6 +54,19 @@ export class UserResolver{
         return User.findOne(req.session.uid);
     }
 
+    @Mutation(() => Boolean)
+    @UseMiddleware(isAuth) 
+    async deleteAccount(
+        @Ctx() Context : MyContext
+    ) : Promise<Boolean> {
+        const { uid } = Context.req.session;
+
+        await User.delete({ id: uid });
+        await this.logout(Context);
+
+        return true;
+    }
+
     @Mutation(() => UserResponse)
     @UseMiddleware(isAuth)
     async changeEmail(

@@ -7,9 +7,7 @@ const ChangeEmailForm: React.FC<{}> = () => {
     const [changeEmail] = useChangeEmailMutation();
 
     return (
-        <>
-            <Heading color='white'>Update email?</Heading>
-                    
+        <>            
             <Formik
                 initialValues = {{ newEmail: '' }}
                 onSubmit = {async ({ newEmail }, { setValues }) => {
@@ -22,7 +20,9 @@ const ChangeEmailForm: React.FC<{}> = () => {
             >
                 {({ values, isSubmitting, handleChange }) => (
                     <Form>
-                        <Box mb={4}>
+                        <Heading color='white'>Update email?</Heading>
+
+                        <Box my={4}>
                             <Input
                                 type = 'text'
                                 placeholder = 'New Email'

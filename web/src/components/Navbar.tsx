@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Flex, Link } from '@chakra-ui/react';
-import NextLink from 'next/link';
-import Image from 'next/image';
 import { useApolloClient } from '@apollo/client';
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
+import NextLink from 'next/link';
+import Image from 'next/image';
 
 const Navbar : React.FC<{}> = ({}) => {
     const [logout] = useLogoutMutation();
