@@ -1,4 +1,5 @@
 import argon2 from 'argon2';
+import { Song } from '../entities/Song';
 import { User } from '../entities/User';
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { getConnection } from 'typeorm';
@@ -6,6 +7,8 @@ import { MyContext } from '../types';
 import { v4 } from 'uuid';
 import { sendEmail } from '../utils/sendEmail';
 import { isAuth } from '../middleware/isAuth';
+import path from 'path';
+import fs from 'fs';
 
 @InputType()
 class RegisterInput{
@@ -61,7 +64,23 @@ export class UserResolver{
     ) : Promise<Boolean> {
         const { uid } = Context.req.session;
 
+        const songs = await Song.find({ uid });
+
+        for(let i=0;i<songs.length;i++) {
+            if(songs[i]?.name){
+                const location = path.join(__dirname, `../../songs/${songs[i].name}`);
+       
+                fs.unlink(location, err => {
+                   if(err){
+                      console.log(err);
+                   }
+                });
+             }
+        }
+
+        await Song.delete({ uid });
         await User.delete({ id: uid });
+     
         await this.logout(Context);
 
         return true;
