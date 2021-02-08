@@ -1,4 +1,4 @@
-fragment SongSnippet on Song {
+fragment RegularSong on Song {
     id
     title
     url

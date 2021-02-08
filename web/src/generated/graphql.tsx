@@ -163,13 +163,34 @@ export type LoginInput = {
 };
 
 
-export type SongSnippetFragment = (
+export type RegularErrorFragment = (
+  { __typename?: 'FieldError' }
+  & Pick<FieldError, 'field' | 'message'>
+);
+
+export type RegularSongFragment = (
   { __typename?: 'Song' }
   & Pick<Song, 'id' | 'title' | 'url' | 'ratingStatus' | 'createdAt' | 'dislikes' | 'likes'>
   & { user: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username'>
   ) }
+);
+
+export type RegularUserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'username' | 'email'>
+);
+
+export type RegularUserResponseFragment = (
+  { __typename?: 'UserResponse' }
+  & { user?: Maybe<(
+    { __typename?: 'User' }
+    & RegularUserFragment
+  )>, errors?: Maybe<Array<(
+    { __typename?: 'FieldError' }
+    & RegularErrorFragment
+  )>> }
 );
 
 export type ChangeEmailMutationVariables = Exact<{
@@ -181,13 +202,7 @@ export type ChangeEmailMutation = (
   { __typename?: 'Mutation' }
   & { changeEmail: (
     { __typename?: 'UserResponse' }
-    & { user?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    )>, errors?: Maybe<Array<(
-      { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
-    )>> }
+    & RegularUserResponseFragment
   ) }
 );
 
@@ -201,13 +216,7 @@ export type ChangePasswordMutation = (
   { __typename?: 'Mutation' }
   & { changePassword: (
     { __typename?: 'UserResponse' }
-    & { user?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    )>, errors?: Maybe<Array<(
-      { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
-    )>> }
+    & RegularUserResponseFragment
   ) }
 );
 
@@ -220,13 +229,7 @@ export type ChangeUsernameMutation = (
   { __typename?: 'Mutation' }
   & { changeUsername: (
     { __typename?: 'UserResponse' }
-    & { user?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    )>, errors?: Maybe<Array<(
-      { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
-    )>> }
+    & RegularUserResponseFragment
   ) }
 );
 
@@ -287,13 +290,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'UserResponse' }
-    & { user?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    )>, errors?: Maybe<Array<(
-      { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
-    )>> }
+    & RegularUserResponseFragment
   ) }
 );
 
@@ -314,13 +311,7 @@ export type RegisterMutation = (
   { __typename?: 'Mutation' }
   & { register: (
     { __typename?: 'UserResponse' }
-    & { user?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    )>, errors?: Maybe<Array<(
-      { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
-    )>> }
+    & RegularUserResponseFragment
   ) }
 );
 
@@ -342,7 +333,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username'>
+    & RegularUserFragment
   )> }
 );
 
@@ -359,7 +350,7 @@ export type SongsQuery = (
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
       { __typename?: 'Song' }
-      & SongSnippetFragment
+      & RegularSongFragment
     )> }
   ) }
 );
@@ -377,7 +368,7 @@ export type TrendingSongsQuery = (
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
       { __typename?: 'Song' }
-      & SongSnippetFragment
+      & RegularSongFragment
     )> }
   ) }
 );
@@ -395,13 +386,13 @@ export type UserSongsQuery = (
     & Pick<PaginatedSongs, 'hasMore'>
     & { songs: Array<(
       { __typename?: 'Song' }
-      & SongSnippetFragment
+      & RegularSongFragment
     )> }
   ) }
 );
 
-export const SongSnippetFragmentDoc = gql`
-    fragment SongSnippet on Song {
+export const RegularSongFragmentDoc = gql`
+    fragment RegularSong on Song {
   id
   title
   url
@@ -415,20 +406,37 @@ export const SongSnippetFragmentDoc = gql`
   }
 }
     `;
+export const RegularUserFragmentDoc = gql`
+    fragment RegularUser on User {
+  id
+  username
+  email
+}
+    `;
+export const RegularErrorFragmentDoc = gql`
+    fragment RegularError on FieldError {
+  field
+  message
+}
+    `;
+export const RegularUserResponseFragmentDoc = gql`
+    fragment RegularUserResponse on UserResponse {
+  user {
+    ...RegularUser
+  }
+  errors {
+    ...RegularError
+  }
+}
+    ${RegularUserFragmentDoc}
+${RegularErrorFragmentDoc}`;
 export const ChangeEmailDocument = gql`
     mutation ChangeEmail($newEmail: String!) {
   changeEmail(newEmail: $newEmail) {
-    user {
-      id
-      username
-    }
-    errors {
-      field
-      message
-    }
+    ...RegularUserResponse
   }
 }
-    `;
+    ${RegularUserResponseFragmentDoc}`;
 export type ChangeEmailMutationFn = Apollo.MutationFunction<ChangeEmailMutation, ChangeEmailMutationVariables>;
 
 /**
@@ -457,17 +465,10 @@ export type ChangeEmailMutationOptions = Apollo.BaseMutationOptions<ChangeEmailM
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($newPassword: String!, $token: String!) {
   changePassword(newPassword: $newPassword, token: $token) {
-    user {
-      id
-      username
-    }
-    errors {
-      field
-      message
-    }
+    ...RegularUserResponse
   }
 }
-    `;
+    ${RegularUserResponseFragmentDoc}`;
 export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMutation, ChangePasswordMutationVariables>;
 
 /**
@@ -497,17 +498,10 @@ export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePas
 export const ChangeUsernameDocument = gql`
     mutation ChangeUsername($newUsername: String!) {
   changeUsername(newUsername: $newUsername) {
-    user {
-      id
-      username
-    }
-    errors {
-      field
-      message
-    }
+    ...RegularUserResponse
   }
 }
-    `;
+    ${RegularUserResponseFragmentDoc}`;
 export type ChangeUsernameMutationFn = Apollo.MutationFunction<ChangeUsernameMutation, ChangeUsernameMutationVariables>;
 
 /**
@@ -685,17 +679,10 @@ export type LikeSongMutationOptions = Apollo.BaseMutationOptions<LikeSongMutatio
 export const LoginDocument = gql`
     mutation Login($input: LoginInput!) {
   login(input: $input) {
-    user {
-      id
-      username
-    }
-    errors {
-      field
-      message
-    }
+    ...RegularUserResponse
   }
 }
-    `;
+    ${RegularUserResponseFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -753,17 +740,10 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterDocument = gql`
     mutation Register($input: RegisterInput!) {
   register(input: $input) {
-    user {
-      id
-      username
-    }
-    errors {
-      field
-      message
-    }
+    ...RegularUserResponse
   }
 }
-    `;
+    ${RegularUserResponseFragmentDoc}`;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
@@ -823,11 +803,10 @@ export type UploadSongMutationOptions = Apollo.BaseMutationOptions<UploadSongMut
 export const MeDocument = gql`
     query Me {
   me {
-    id
-    username
+    ...RegularUser
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 /**
  * __useMeQuery__
@@ -858,11 +837,11 @@ export const SongsDocument = gql`
   songs(limit: $limit, cursor: $cursor) {
     hasMore
     songs {
-      ...SongSnippet
+      ...RegularSong
     }
   }
 }
-    ${SongSnippetFragmentDoc}`;
+    ${RegularSongFragmentDoc}`;
 
 /**
  * __useSongsQuery__
@@ -895,11 +874,11 @@ export const TrendingSongsDocument = gql`
   trendingSongs(limit: $limit, cursor: $cursor) {
     hasMore
     songs {
-      ...SongSnippet
+      ...RegularSong
     }
   }
 }
-    ${SongSnippetFragmentDoc}`;
+    ${RegularSongFragmentDoc}`;
 
 /**
  * __useTrendingSongsQuery__
@@ -932,11 +911,11 @@ export const UserSongsDocument = gql`
   userSongs(limit: $limit, cursor: $cursor) {
     hasMore
     songs {
-      ...SongSnippet
+      ...RegularSong
     }
   }
 }
-    ${SongSnippetFragmentDoc}`;
+    ${RegularSongFragmentDoc}`;
 
 /**
  * __useUserSongsQuery__

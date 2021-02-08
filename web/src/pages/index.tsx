@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack } from '@chakra-ui/react';
+import { Box, Button, Heading, Stack } from '@chakra-ui/react';
 import ConcertWrapper from '../components/ConcertWrapper';
 import { withApollo } from '../utils/withApollo';
 import { useDeleteSongMutation, useSongsQuery } from '../generated/graphql';
@@ -28,17 +28,27 @@ const Index: React.FC<{}> = ({}) => {
 
   handlePlayEvent();
 
+  if(loading) {
+    return (
+        <ConcertWrapper>
+            <Box mx='auto'>
+                <Heading color='white'>Loading...</Heading>
+            </Box>
+        </ConcertWrapper>
+    )
+  }
+
   return (
     <ConcertWrapper>
 
       <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
-        {!loading && data!.songs.songs.map(s => 
+        {!loading? data!.songs.songs.map(s => 
            <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
-        )}
+        ): null}
 
         <Box mb={8}> 
-          {!loading && data!.songs.hasMore && (
+          {!loading && data!.songs.hasMore ? (
             <Button 
               loading={loading} 
               _focus={{ outline: 'none' }}
@@ -53,7 +63,7 @@ const Index: React.FC<{}> = ({}) => {
             >
               Load More
             </Button>
-          )}
+          ): null}
         </Box>
 
       </Stack>

@@ -2,7 +2,7 @@ query UserSongs($limit: Int!, $cursor: String){
     userSongs(limit: $limit, cursor: $cursor) {
        hasMore
        songs {
-            ...SongSnippet
+            ...RegularSong
        }
     }
 }

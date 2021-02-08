@@ -4,7 +4,7 @@ import ConcertWrapper from '../components/ConcertWrapper';
 import { useDeleteSongMutation, useUserSongsQuery } from '../generated/graphql';
 import { mapTrackProps } from '../utils/mapTrackProps';
 import { handlePlayEvent } from '../utils/handlePlayEvent';
-import { Box, Button, Stack } from '@chakra-ui/react';
+import { Box, Button, Heading, Stack } from '@chakra-ui/react';
 import Track from '../components/Track';
 import ConfirmModal from '../components/ConfirmModal';
 import AuthWrapper from '../components/AuthWrapper';
@@ -29,18 +29,28 @@ const Profile: React.FC<{}> = () => {
 
     handlePlayEvent();
 
+    if(loading) {
+        return (
+            <ConcertWrapper>
+                <Box mx='auto'>
+                    <Heading color='white'>Loading...</Heading>
+                </Box>
+            </ConcertWrapper>
+        )
+    }
+
     return (
         <AuthWrapper requiresAuth>
             <ConcertWrapper>
 
                 <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
-                    {!loading && data!.userSongs.songs.map(s => 
+                    {!loading ? data!.userSongs.songs.map(s => 
                         <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
-                    )}
+                    ): null}
 
                     <Box mb={8}> 
-                    {!loading && data!.userSongs.hasMore && (
+                    {!loading ? data!.userSongs.hasMore && (
                         <Button 
                             loading={loading} 
                             _focus={{ outline: 'none' }}
@@ -55,7 +65,7 @@ const Profile: React.FC<{}> = () => {
                         >
                         Load More
                         </Button>
-                    )}
+                    ): null}
                     </Box>
 
                 </Stack>

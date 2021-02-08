@@ -2,7 +2,7 @@ query trendingSongs($limit: Int!, $cursor: Int!){
     trendingSongs(limit: $limit, cursor: $cursor) {
        hasMore
        songs {
-            ...SongSnippet
+            ...RegularSong
        }
     }
 }

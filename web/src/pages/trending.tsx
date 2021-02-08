@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack } from '@chakra-ui/react';
+import { Box, Button, Heading, Stack } from '@chakra-ui/react';
 import { useDeleteSongMutation, useTrendingSongsQuery } from '../generated/graphql';
 import { withApollo } from '../utils/withApollo';
 import { handlePlayEvent } from '../utils/handlePlayEvent';
@@ -29,17 +29,27 @@ const Trending : React.FC<{}> = () => {
 
     handlePlayEvent();
 
+    if(loading) {
+        return (
+            <ConcertWrapper>
+                <Box mx='auto'>
+                    <Heading color='white'>Loading...</Heading>
+                </Box>
+            </ConcertWrapper>
+        )
+    }
+
     return (
         <ConcertWrapper>
 
             <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
-                {!loading && data!.trendingSongs.songs.map(s => 
+                {!loading? data!.trendingSongs.songs.map(s => 
                     <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
-                )}
+                ): null}
 
                 <Box mb={8}> 
-                {!loading && data!.trendingSongs.hasMore && (
+                {!loading && data!.trendingSongs.hasMore? (
                     <Button 
                         loading={loading} 
                         _focus={{ outline: 'none' }}
@@ -55,7 +65,7 @@ const Trending : React.FC<{}> = () => {
                     >
                         Load More
                     </Button>
-                )}
+                ): null}
                 </Box>
 
             </Stack>

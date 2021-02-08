@@ -1,13 +1,5 @@
 mutation ChangeEmail($newEmail: String!) {
     changeEmail(newEmail: $newEmail) {
-         user {
-            id
-            username
-        }
-
-        errors {
-            field 
-            message
-        }
+        ...RegularUserResponse
     }
 }

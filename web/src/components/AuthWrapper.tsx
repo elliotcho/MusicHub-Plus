@@ -1,7 +1,6 @@
 import React from 'react';
 import { useMeQuery } from '../generated/graphql';
 import { useRouter } from 'next/router';
-import ConcertWrapper from './ConcertWrapper';
 
 interface AuthWrapperProps {
     requiresAuth?: boolean;
