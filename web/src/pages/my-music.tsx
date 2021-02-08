@@ -9,7 +9,7 @@ import Track from '../components/Track';
 import ConfirmModal from '../components/ConfirmModal';
 import AuthWrapper from '../components/AuthWrapper';
 
-const Profile: React.FC<{}> = () => {
+const MyMusic: React.FC<{}> = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [songId, setSongId] = useState(-1);
 
@@ -39,20 +39,30 @@ const Profile: React.FC<{}> = () => {
         )
     }
 
+    if(!loading && data.userSongs.songs.length === 0) {
+        return (
+            <ConcertWrapper>
+                <Box mx='auto'>
+                    <Heading color='white'>No songs</Heading>
+                </Box>
+            </ConcertWrapper>
+        )
+    }
+
     return (
         <AuthWrapper requiresAuth>
             <ConcertWrapper>
 
                 <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
-                    {!loading ? data!.userSongs.songs.map(s => 
+                    {!loading && data!.userSongs.songs.map(s => 
                         <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
-                    ): null}
+                    )}
 
                     <Box mb={8}> 
-                    {!loading ? data!.userSongs.hasMore && (
+                    {data!.userSongs.hasMore && (
                         <Button 
-                            loading={loading} 
+                            isLoading={loading} 
                             _focus={{ outline: 'none' }}
                             onClick = {async () => {
                                 const cursor = data.userSongs.songs[data.userSongs.songs.length - 1].createdAt;
@@ -65,7 +75,7 @@ const Profile: React.FC<{}> = () => {
                         >
                         Load More
                         </Button>
-                    ): null}
+                    )}
                     </Box>
 
                 </Stack>
@@ -89,4 +99,4 @@ const Profile: React.FC<{}> = () => {
     )
 }
 
-export default withApollo({ ssr: false })(Profile);
+export default withApollo({ ssr: false })(MyMusic);

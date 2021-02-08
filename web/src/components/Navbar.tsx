@@ -49,9 +49,9 @@ const Navbar : React.FC<{}> = ({}) => {
                     </Link>
                 </NextLink>
 
-                <NextLink href = '/profile'>
+                <NextLink href = '/my-music'>
                     <Link ml={4}>
-                        Profile
+                        My-Music
                     </Link>
                 </NextLink>
 

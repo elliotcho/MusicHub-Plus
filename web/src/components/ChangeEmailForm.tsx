@@ -44,7 +44,12 @@ const ChangeEmailForm: React.FC<{}> = () => {
                             </Box>
                         )}
 
-                        <Button type='submit' isLoading={isSubmitting} colorScheme='green'>
+                        <Button 
+                            type='submit' 
+                            isLoading={isSubmitting} 
+                            colorScheme='green'
+                            width='100%'
+                        >
                             Submit
                         </Button>
                     </Form>

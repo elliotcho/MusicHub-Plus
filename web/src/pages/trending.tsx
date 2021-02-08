@@ -39,19 +39,29 @@ const Trending : React.FC<{}> = () => {
         )
     }
 
+    if(!loading && data.trendingSongs.songs.length === 0) {
+        return (
+            <ConcertWrapper>
+                <Box mx='auto'>
+                    <Heading color='white'>No songs</Heading>
+                </Box>
+            </ConcertWrapper>
+        )
+    }
+
     return (
         <ConcertWrapper>
 
             <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
-                {!loading? data!.trendingSongs.songs.map(s => 
+                {!loading && data!.trendingSongs.songs.map(s => 
                     <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
-                ): null}
+                )}
 
                 <Box mb={8}> 
-                {!loading && data!.trendingSongs.hasMore? (
+                {data!.trendingSongs.hasMore && (
                     <Button 
-                        loading={loading} 
+                        isLoading={loading} 
                         _focus={{ outline: 'none' }}
                         onClick = {async () => {
                             const limit = variables?.limit;
@@ -65,7 +75,7 @@ const Trending : React.FC<{}> = () => {
                     >
                         Load More
                     </Button>
-                ): null}
+                )}
                 </Box>
 
             </Stack>

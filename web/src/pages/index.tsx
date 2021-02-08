@@ -38,19 +38,29 @@ const Index: React.FC<{}> = ({}) => {
     )
   }
 
+  if(!loading && data.songs.songs.length === 0) {
+    return (
+        <ConcertWrapper>
+            <Box mx='auto'>
+                <Heading color='white'>No songs</Heading>
+            </Box>
+        </ConcertWrapper>
+    )
+  }
+
   return (
     <ConcertWrapper>
 
       <Stack spacing={8} width='90%' maxW={500} m='auto'>
 
-        {!loading? data!.songs.songs.map(s => 
+        {!loading && data!.songs.songs.map(s => 
            <Track {...mapTrackProps(s)} deleteSong={confirmDelete}/>
-        ): null}
+        )}
 
         <Box mb={8}> 
-          {!loading && data!.songs.hasMore ? (
+          {data!.songs.hasMore && (
             <Button 
-              loading={loading} 
+              isLoading={loading}
               _focus={{ outline: 'none' }}
               onClick = {async () => {
                 const cursor = data.songs.songs[data.songs.songs.length - 1].createdAt;
@@ -63,7 +73,7 @@ const Index: React.FC<{}> = ({}) => {
             >
               Load More
             </Button>
-          ): null}
+          )}
         </Box>
 
       </Stack>

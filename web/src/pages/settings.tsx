@@ -20,19 +20,11 @@ const Settings: React.FC<{}> = () => {
     return (
         <AuthWrapper requiresAuth>
             <ConcertWrapper>
-                <Stack mx='auto' spacing={8}>
+                <Stack mx='auto' spacing={12}>
 
                     <ChangeEmailForm />
 
                     <ChangeUsernameForm />
-   
-                    <Box color='white'>
-                        <NextLink href='/forgot-password'>
-                            <Link>
-                                Update password?
-                            </Link>
-                        </NextLink>
-                    </Box>
 
                     <Button 
                         colorScheme = 'red' 
@@ -41,6 +33,14 @@ const Settings: React.FC<{}> = () => {
                     >
                         Delete Account
                     </Button>
+   
+                    <Box color='white'>
+                        <NextLink href='/forgot-password'>
+                            <Link>
+                                Update password?
+                            </Link>
+                        </NextLink>
+                    </Box>
                 </Stack>
 
                 <ConfirmModal 
