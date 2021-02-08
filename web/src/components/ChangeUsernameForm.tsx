@@ -1,7 +1,8 @@
 import React from 'react';
 import { Form, Formik } from 'formik';
-import { Box, Button, FormLabel, Heading, Input } from '@chakra-ui/react';
+import { Box, Button, Heading, Input } from '@chakra-ui/react';
 import { useChangeUsernameMutation } from '../generated/graphql';
+import { toErrorMap } from '../utils/toErrorMap';
 
 const ChangeUsernameForm: React.FC<{}> = () => {
     const [changeUsername] = useChangeUsernameMutation();
@@ -10,15 +11,19 @@ const ChangeUsernameForm: React.FC<{}> = () => {
         <>
             <Formik
                 initialValues = {{ newUsername: '' }}
-                onSubmit = {async ({ newUsername }, { setValues }) => {
-                    await changeUsername({
+                onSubmit = {async ({ newUsername }, { setErrors, setValues }) => {
+                    const response = await changeUsername({
                         variables: { newUsername }
                     });
 
-                    setValues({ newUsername: '' });
+                    if(response.data.changeUsername.user) {
+                        setValues({ newUsername: '' });
+                    } else { 
+                        setErrors(toErrorMap(response.data.changeUsername.errors));
+                    }
                 }}
             >
-                {({ values, isSubmitting, handleChange }) => (
+                {({ values, isSubmitting, handleChange, errors }) => (
                     <Form>
                         <Heading color='white'>Update username?</Heading>
 
@@ -32,6 +37,12 @@ const ChangeUsernameForm: React.FC<{}> = () => {
                                 name = 'newUsername'
                             />
                         </Box>
+
+                        {errors && errors.newUsername && (
+                            <Box color='tomato' mb={4}>
+                                {errors.newUsername}
+                            </Box>
+                        )}
 
                         <Button type='submit' isLoading={isSubmitting} colorScheme='green'>
                             Submit

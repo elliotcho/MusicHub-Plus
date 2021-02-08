@@ -98,7 +98,7 @@ export class UserResolver{
         if(user && user?.id !== uid) {
             return {
                 errors: [{
-                    field: 'email',
+                    field: 'newEmail',
                     message: 'Email taken by another user'
                 }]
             };
@@ -121,7 +121,7 @@ export class UserResolver{
         if(user && user?.id !== uid) {
             return {
                 errors: [{
-                    field: 'email',
+                    field: 'newUsername',
                     message: 'Username taken by another user'
                 }]
             };

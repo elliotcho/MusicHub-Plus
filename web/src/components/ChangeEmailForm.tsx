@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Formik } from 'formik';
 import { Box, Button, Heading, Input } from '@chakra-ui/react';
 import { useChangeEmailMutation } from '../generated/graphql';
+import { toErrorMap } from '../utils/toErrorMap';
 
 const ChangeEmailForm: React.FC<{}> = () => {
     const [changeEmail] = useChangeEmailMutation();
@@ -10,15 +11,19 @@ const ChangeEmailForm: React.FC<{}> = () => {
         <>            
             <Formik
                 initialValues = {{ newEmail: '' }}
-                onSubmit = {async ({ newEmail }, { setValues }) => {
-                    await changeEmail({
+                onSubmit = {async ({ newEmail }, { setErrors, setValues }) => {
+                    const response = await changeEmail({
                         variables: { newEmail }
                     });
 
-                    setValues({ newEmail: '' });
+                    if(response.data.changeEmail.user) {
+                        setValues({ newEmail: '' });
+                    } else {
+                        setErrors(toErrorMap(response.data.changeEmail.errors));
+                    }
                 }}
             >
-                {({ values, isSubmitting, handleChange }) => (
+                {({ values, isSubmitting, handleChange, errors }) => (
                     <Form>
                         <Heading color='white'>Update email?</Heading>
 
@@ -32,6 +37,12 @@ const ChangeEmailForm: React.FC<{}> = () => {
                                 name = 'newEmail'
                             />
                         </Box>
+
+                        {errors && errors.newEmail && (
+                            <Box color='tomato' mb={4}>
+                                {errors.newEmail}
+                            </Box>
+                        )}
 
                         <Button type='submit' isLoading={isSubmitting} colorScheme='green'>
                             Submit
