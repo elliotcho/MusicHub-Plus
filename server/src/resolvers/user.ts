@@ -1,12 +1,22 @@
+import { 
+    Arg, 
+    Ctx, 
+    Field, 
+    InputType, 
+    Mutation, 
+    ObjectType, 
+    Query, 
+    Resolver, 
+    UseMiddleware 
+} from 'type-graphql';
 import argon2 from 'argon2';
+import { getConnection } from 'typeorm';
+import { v4 } from 'uuid';
+import { isAuth } from '../middleware/isAuth';
+import { sendEmail } from '../utils/sendEmail';
 import { Song } from '../entities/Song';
 import { User } from '../entities/User';
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from 'type-graphql';
-import { getConnection } from 'typeorm';
 import { MyContext } from '../types';
-import { v4 } from 'uuid';
-import { sendEmail } from '../utils/sendEmail';
-import { isAuth } from '../middleware/isAuth';
 import path from 'path';
 import fs from 'fs';
 
@@ -44,7 +54,7 @@ class UserResponse{
     user? : User;
 }
 
-@Resolver()
+@Resolver(User)
 export class UserResolver{
     @Query(() => User, { nullable: true })
     async me(
@@ -82,7 +92,6 @@ export class UserResolver{
         await User.delete({ id: uid });
      
         await this.logout(Context);
-
         return true;
     }
 
@@ -138,8 +147,7 @@ export class UserResolver{
         @Arg('newPassword') newPassword: string,
         @Ctx() { redis, req } : MyContext
     ) : Promise<UserResponse> {
-        const key = `${token}`;
-        const uid = await redis.get(key);
+        const uid = await redis.get(token);
 
         if(!uid){
             return {
@@ -153,10 +161,9 @@ export class UserResolver{
         const user = await User.findOne(uid);
 
         await User.update({ id: parseInt(uid) }, { password: await argon2.hash(newPassword) });
-        await redis.del(key);
+        await redis.del(token);
 
         req.session.uid = parseInt(uid);
-        
         return { user };
     }
 
@@ -171,7 +178,7 @@ export class UserResolver{
             return true;
         }
 
-        const token = `${v4()}`;
+        const token = v4();
 
         const href = `<a href='http://localhost:3000/change-password/${token}'>Reset Password</a>`;
         const expiresIn = 1000 * 60 * 60 * 24 * 3;
@@ -214,7 +221,9 @@ export class UserResolver{
                         message: 'Email already exists'
                    }]
                };
-           } else {
+           } 
+           
+           else {
                 return {
                     errors : [{
                         field: 'username',
@@ -225,7 +234,6 @@ export class UserResolver{
         }
 
         req.session.uid = user.id;
-
         return { user };
     }
 
@@ -236,10 +244,10 @@ export class UserResolver{
     ) : Promise<UserResponse> {
         let user;
 
-        if(input.username.includes('@')){
-            user = await User.findOne({ where : {email: input.username} });
+        if(!input.username.includes('@')){
+            user = await User.findOne({ where : { username: input.username } });
         } else{
-            user = await User.findOne({ where : {username: input.username} });
+            user = await User.findOne({ where : { email: input.username } });
         }
 
         if(!user){
@@ -263,7 +271,6 @@ export class UserResolver{
         }
 
         req.session.uid = user.id;
-
         return { user };
     }
 
@@ -276,7 +283,6 @@ export class UserResolver{
                 res.clearCookie('cid');
 
                 if(err){
-                    console.log(err);
                     resolve(false);
                     return;
                 }

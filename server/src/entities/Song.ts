@@ -30,6 +30,9 @@ export class Song extends BaseEntity {
     @Field(() => String)
     url?: string;
 
+    @Field(() => Int, { nullable: true })
+    ratingStatus: number | null;
+
     @Field()
     @Column()
     uid: number;
@@ -37,9 +40,6 @@ export class Song extends BaseEntity {
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.songs)
     user: User;
-
-    @Field(() => Int, { nullable: true })
-    ratingStatus: number | null;
 
     @Field()
     @Column({ default: 0 })

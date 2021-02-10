@@ -11,18 +11,16 @@ import {
    Root, 
    UseMiddleware 
 } from "type-graphql";
-
 import { GraphQLUpload } from 'graphql-upload';
 import { getConnection } from 'typeorm';
 import { v4 } from 'uuid';
-import fs, { createWriteStream } from 'fs';
-import path from 'path';
-
 import { MyContext, Upload } from "../types";
 import { isAuth } from '../middleware/isAuth';
 import { Song } from "../entities/Song";
 import { User } from "../entities/User";
 import { Rating } from "../entities/Rating";
+import fs, { createWriteStream } from 'fs';
+import path from 'path';
 
 @ObjectType()
 class PaginatedSongs {
@@ -68,7 +66,9 @@ export class SongResolver{
 
       const rating = await Rating.findOne({ songId, userId: uid });
 
+      //user has disliked already, so this removes the dislike
       if(rating?.value === -1) {
+
          await getConnection().transaction(async (tm) => {
             await tm.query(
                `
@@ -86,7 +86,12 @@ export class SongResolver{
                `
             );
          });
-      } else if(rating?.value === 1) {
+
+      } 
+      
+      //if user has liked the song, remove the like / add the dislike
+      else if(rating?.value === 1) {
+
          await getConnection().transaction(async (tm) => {
             await tm.query(
                `
@@ -104,7 +109,12 @@ export class SongResolver{
                `
             );
          });
-      } else {
+
+      } 
+      
+      //user is disliking and has not already liked or disliked
+      else {
+
          await getConnection().transaction(async (tm) => {
             await tm.query(
                `
@@ -121,6 +131,7 @@ export class SongResolver{
                `
             );
          });
+
       }
 
       return true;
@@ -136,7 +147,9 @@ export class SongResolver{
 
       const rating = await Rating.findOne({ songId, userId: uid });
 
+      //user has already liked, so remove this like
       if(rating?.value === 1) {
+
          await getConnection().transaction(async (tm) => {
             await tm.query(
                `
@@ -154,7 +167,12 @@ export class SongResolver{
                `
             );
          });
-      } else if(rating?.value === -1) {
+
+      } 
+      
+      //if user has disliked the song, remove the dislike / add the like
+      else if(rating?.value === -1) {
+
          await getConnection().transaction(async (tm) => {
             await tm.query(
                `
@@ -172,7 +190,13 @@ export class SongResolver{
                `
             );
          });
-      } else {
+
+      } 
+      
+         
+      //user is liking and has not already liked or disliked
+      else {
+
          await getConnection().transaction(async (tm) => {
             await tm.query(
                `
@@ -189,6 +213,7 @@ export class SongResolver{
                `
             );
          });
+
       }
 
       return true;
@@ -218,8 +243,8 @@ export class SongResolver{
 
    @Query(() => PaginatedSongs)
    async songs(
-      @Arg('limit', () => Int) limit: number,
-      @Arg('cursor', () => String, { nullable: true }) cursor: string | null
+      @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
+      @Arg('limit', () => Int) limit: number
    ) : Promise<PaginatedSongs> {
       const realLimit = Math.min(limit, 50);
       let date;
@@ -235,7 +260,7 @@ export class SongResolver{
             order by song."createdAt" DESC
             limit $1
          `, 
-          cursor? [realLimit + 1, date] : [realLimit + 1]
+         cursor? [realLimit + 1, date] : [realLimit + 1]
       );
 
       for(let i=0;i<songs.length;i++){
@@ -252,18 +277,15 @@ export class SongResolver{
    }
 
    @Query(() => PaginatedSongs)
+   @UseMiddleware(isAuth)
    async userSongs(
-      @Arg('limit', () => Int) limit: number,
       @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
+      @Arg('limit', () => Int) limit: number,
       @Ctx() { req } : MyContext
    ) : Promise<PaginatedSongs> {
       const { uid } = req.session;
       const realLimit = Math.min(limit, 50);
       let date;
-
-      if(!uid) {
-         return { songs: [], hasMore: false }
-      }
 
       if(cursor) {
          date = new Date(parseInt(cursor));
@@ -295,8 +317,8 @@ export class SongResolver{
 
    @Query(() => PaginatedSongs)
    async trendingSongs(
-      @Arg('limit', () => Int) limit: number,
       @Arg('cursor', () => Int, { nullable: true }) cursor: number | null,
+      @Arg('limit', () => Int) limit: number
    ) : Promise<PaginatedSongs> {
       const realLimit = Math.min(limit, 50);
      
@@ -329,7 +351,6 @@ export class SongResolver{
       @Arg('title') title: string,
       @Ctx() { req } : MyContext
    ): Promise<boolean> {
-         
          const name = 'SONG-' + v4() + path.extname(filename);
          const { uid } = req.session;
          

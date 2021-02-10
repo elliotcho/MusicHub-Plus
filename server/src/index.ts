@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import 'dotenv/config';
-import connectRedis from 'connect-redis';
 import express from 'express';
 import session from 'express-session';
+import connectRedis from 'connect-redis';
 import Redis from 'ioredis';
-import { ApolloServer } from 'apollo-server-express';
 import { createConnection } from 'typeorm';
+import { ApolloServer } from 'apollo-server-express';
 import { createSchema } from './utils/createSchema';
 import { User } from './entities/User';
 import { Song } from './entities/Song';
@@ -26,9 +26,6 @@ const main = async () => {
             Rating
         ]
     });
-
-    //await conn.runMigrations()
-    //await Song.delete({});
 
     const schema = await createSchema();
 
@@ -72,8 +69,10 @@ const main = async () => {
 
     apolloServer.applyMiddleware({ app, cors: false });
 
-    app.listen(4000, () => {
-        console.log('server started on localhost:4000');
+    const port = process.env.PORT;
+
+    app.listen(port, () => {
+        console.log(`listening to port ${port}`);
     });
 }
 

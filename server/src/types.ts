@@ -4,7 +4,7 @@ import { Redis } from 'ioredis';
 import { Stream } from 'stream';
 
 export type MyContext = {
-    req: Request & { session: Session & {uid? : number} },
+    req: Request & { session: Session & { uid? : number} },
     res: Response,
     redis: Redis
 }
