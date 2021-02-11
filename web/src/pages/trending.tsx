@@ -59,31 +59,31 @@ const Trending : React.FC<{}> = () => {
                 )}
 
                 <Box mb={8}> 
-                {data!.trendingSongs.hasMore && (
-                    <Button 
-                        isLoading={loading} 
-                        _focus={{ outline: 'none' }}
-                        onClick = {async () => {
-                            const limit = variables?.limit;
+                    {data!.trendingSongs.hasMore && (
+                        <Button 
+                            isLoading={loading} 
+                            _focus={{ outline: 'none' }}
+                            onClick = {async () => {
+                                const limit = variables?.limit;
 
-                            await fetchMore({
-                                variables: { cursor: cursor + 5, limit }
-                            });
+                                await fetchMore({
+                                    variables: { cursor: cursor + 5, limit }
+                                });
 
-                            setCursor(cursor + 5);
-                        }}
-                    >
-                        Load More
-                    </Button>
-                )}
+                                setCursor(cursor + 5);
+                            }}
+                        >
+                            Load More
+                        </Button>
+                    )}
                 </Box>
 
             </Stack>
 
             <ConfirmModal 
                 isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
                 body = 'Are you sure you want to delete this song?'
+                onClose={() => setIsOpen(false)}
                 onClick={async () => {
                     await deleteSong({
                         variables: { id: songId },

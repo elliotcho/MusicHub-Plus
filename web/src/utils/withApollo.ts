@@ -1,9 +1,11 @@
-import { createWithApollo } from './createWithApollo';
-import { PaginatedSongs } from '../generated/graphql';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client';
-import { NextPageContext } from 'next';
+import { getPaginatedSongsPolicy } from './getPaginatedSongsPolicy';
+import { createWithApollo } from './createWithApollo';
 import { isServer } from './isServer';
+import { NextPageContext } from 'next';
+
+const songsPolicy = getPaginatedSongsPolicy();
 
 const client = (ctx: NextPageContext) => (
     new ApolloClient({
@@ -22,51 +24,9 @@ const client = (ctx: NextPageContext) => (
             typePolicies: {
                 Query: {
                     fields: {
-                        songs: {
-                            keyArgs: ['PaginatedSongs'],
-                            merge(
-                                existing: PaginatedSongs | undefined,
-                                incoming: PaginatedSongs
-                            ) : PaginatedSongs {
-                                return {
-                                    ...incoming,
-                                    songs: [
-                                        ...(existing?.songs || []),
-                                        ...incoming.songs
-                                    ]
-                                }
-                            }
-                        },
-                        userSongs: {
-                            keyArgs: ['PaginatedSongs'],
-                            merge(
-                                existing: PaginatedSongs | undefined,
-                                incoming: PaginatedSongs
-                            ) : PaginatedSongs {
-                                return {
-                                    ...incoming,
-                                    songs: [
-                                        ...(existing?.songs || []),
-                                        ...incoming.songs
-                                    ]
-                                }
-                            }
-                        },
-                        trendingSongs: {
-                            keyArgs: ['PaginatedSongs'],
-                            merge(
-                                existing: PaginatedSongs | undefined,
-                                incoming: PaginatedSongs
-                            ) : PaginatedSongs {
-                                return {
-                                    ...incoming,
-                                    songs: [
-                                        ...(existing?.songs || []),
-                                        ...incoming.songs
-                                    ]
-                                }
-                            }
-                        }
+                        trendingSongs: songsPolicy,
+                        userSongs: songsPolicy,
+                        songs: songsPolicy
                     }
                 }
             }

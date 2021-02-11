@@ -16,10 +16,10 @@ const ChangeUsernameForm: React.FC<{}> = () => {
                         variables: { newUsername }
                     });
 
-                    if(response.data.changeUsername.user) {
-                        setValues({ newUsername: '' });
-                    } else { 
+                    if(!response.data.changeUsername.user) {
                         setErrors(toErrorMap(response.data.changeUsername.errors));
+                    } else {
+                        setValues({ newUsername: '' });
                     }
                 }}
             >

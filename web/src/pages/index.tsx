@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Button, Heading, Stack } from '@chakra-ui/react';
-import ConcertWrapper from '../components/ConcertWrapper';
-import { withApollo } from '../utils/withApollo';
 import { useDeleteSongMutation, useSongsQuery } from '../generated/graphql';
+import { withApollo } from '../utils/withApollo';
 import { mapTrackProps } from '../utils/mapTrackProps';
 import { handlePlayEvent } from '../utils/handlePlayEvent';
+import ConcertWrapper from '../components/ConcertWrapper';
 import ConfirmModal from '../components/ConfirmModal';
 import Track from '../components/Track';
 
@@ -80,8 +80,8 @@ const Index: React.FC<{}> = ({}) => {
 
       <ConfirmModal 
          isOpen={isOpen}
-         onClose={() => setIsOpen(false)}
          body = 'Are you sure you want to delete this song?'
+         onClose={() => setIsOpen(false)}
          onClick={async () => {
           await deleteSong({
             variables: { id: songId },

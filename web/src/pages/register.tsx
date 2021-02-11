@@ -1,12 +1,12 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
-import { toErrorMap } from '../utils/toErrorMap';
-import { withApollo } from '../utils/withApollo';
 import { Box, Button, Heading, Input } from '@chakra-ui/react';
 import { MeDocument, MeQuery, useRegisterMutation } from '../generated/graphql';
-import { useRouter } from 'next/router';
+import { toErrorMap } from '../utils/toErrorMap';
+import { withApollo } from '../utils/withApollo';
 import ConcertWrapper from '../components/ConcertWrapper';
 import AuthWrapper from '../components/AuthWrapper';
+import { useRouter } from 'next/router';
 
 const Register: React.FC<{}> = ({}) => {
     const router = useRouter();
@@ -31,15 +31,16 @@ const Register: React.FC<{}> = ({}) => {
                             }
                         });
 
-                        if(response.data.register.user){
-                            router.push('/');
-                        } else {
+                        if(!response.data.register.user){
                             setErrors(toErrorMap(response.data.register.errors));
+                        } else {
+                            router.push('/');
                         }
                     }}
                 >
                 {({ values, isSubmitting, handleChange, errors }) => (
                     <Box mx='auto' width={400}>
+
                         <Heading color='white' mb={3}>
                             Register
                         </Heading>  
@@ -97,10 +98,15 @@ const Register: React.FC<{}> = ({}) => {
                                 </Box>
                             )}
 
-                            <Button type='submit' mt={4} isLoading={isSubmitting}>
+                            <Button 
+                                type='submit' 
+                                isLoading={isSubmitting}
+                                mt={4}
+                            >
                                 Register
                             </Button>
                         </Form>
+
                     </Box>
                 )}
                 </Formik>

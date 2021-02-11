@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Form, Formik } from 'formik';
 import { Box, Button, Heading, Input } from '@chakra-ui/react';
-import { withApollo } from '../utils/withApollo';
 import { useForgotPasswordMutation } from '../generated/graphql';
+import { withApollo } from '../utils/withApollo';
 import ConcertWrapper from '../components/ConcertWrapper';
 
 const ForgotPassword : React.FC<{}> = () => {
     const [complete, setComplete] = useState(false);
-
     const [forgotPassword] = useForgotPasswordMutation();
 
     return (
@@ -42,14 +41,17 @@ const ForgotPassword : React.FC<{}> = () => {
                                         />
                                     </Box>
 
-                                    <Button type='submit' mt={4} isLoading={isSubmitting}>
+                                    <Button 
+                                        type='submit'
+                                        isLoading={isSubmitting}
+                                        mt={4}
+                                    >
                                         Submit
                                     </Button>
                                 </Form>
                             ): (
                                 <Heading color='white'>
-                                    If account with 
-                                    that email exists, 
+                                    If account with that email exists, 
                                     we sent you an email
                                 </Heading> 
                             )

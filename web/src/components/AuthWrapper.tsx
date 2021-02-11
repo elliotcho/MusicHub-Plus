@@ -22,6 +22,7 @@ const AuthWrapper : React.FC<AuthWrapperProps> = ({ children, requiresAuth = fal
             router.push('/login');
         }
 
+        //for routes user can access
         else {
             return (
                 <>

@@ -1,13 +1,11 @@
 import React from 'react';
 import { Box, Flex, IconButton, useToast } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons';
-
 import { 
     useDislikeSongMutation, 
     useLikeSongMutation,
     useMeQuery
 } from '../generated/graphql';
-
 import { updateAfterLike, updateAfterDisike } from '../utils/updateAfterRating';
 import { isServer } from '../utils/isServer';
 
@@ -37,8 +35,9 @@ const Track: React.FC<TrackProps> = ({
     userId,
 }) => {
 
-    const toast = useToast();
+    const focusStyle = { outline: 'none' };
 
+    const toast = useToast();
     const [dislikeSong] = useDislikeSongMutation();
     const [likeSong] = useLikeSongMutation();
 
@@ -47,18 +46,31 @@ const Track: React.FC<TrackProps> = ({
     });
 
     return (
-        <Box p={8} border='solid black' background='white' my={4} borderRadius='11px'>
+        <Box  
+            border='solid black' 
+            borderRadius='11px' 
+            background='white' 
+            my={4}
+            p={8}
+        >
 
             <Flex>
                 <Box>{title} posted by {username}</Box>
 
                 <Box ml='auto'>
-                    {(new Date(parseInt(createdAt))).toLocaleString()}
+                    {new Date(parseInt(createdAt)).toLocaleString()}
                 </Box>
             </Flex>
 
-            <audio controls style={{width: '100%', margin: '10px auto'}}>
-                <source src={url}/>
+            <audio 
+                controls 
+                style={{ 
+                    width: '100%', 
+                    margin: '10px auto', 
+                    outline: 'none' 
+                }}
+            >
+                <source src={url} />
             </audio>
 
             <Box mt={4}>
@@ -67,7 +79,7 @@ const Track: React.FC<TrackProps> = ({
                         icon = {<DeleteIcon/>}
                         aria-label = 'Delete Song'
                         onClick = {() => deleteSong(songId)}
-                        _focus = {{outline: 'none'}}
+                        _focus = {focusStyle}
                      />
                  )}
 
@@ -75,7 +87,7 @@ const Track: React.FC<TrackProps> = ({
                     mx = {4}
                     icon = {<ChevronUpIcon/>}
                     aria-label = 'Like Song'
-                    _focus = {{outline: 'none'}}
+                    _focus = {focusStyle}
                     colorScheme = {ratingStatus === 1? 'green' : undefined}
                     onClick = {async () => {
                        if(!meResponse?.data.me){
@@ -105,7 +117,7 @@ const Track: React.FC<TrackProps> = ({
                     mx = {4}
                     icon = {<ChevronDownIcon/>}
                     aria-label = 'Disike Song'
-                    _focus = {{outline: 'none'}}
+                    _focus = {focusStyle}
                     colorScheme = {ratingStatus === -1? 'red' : undefined}
                     onClick = {async () => {
                        if(!meResponse?.data.me){
@@ -134,6 +146,7 @@ const Track: React.FC<TrackProps> = ({
 
         </Box>
     )
+    
 }
 
 export default Track;

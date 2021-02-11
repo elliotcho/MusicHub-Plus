@@ -12,9 +12,7 @@ import NextLink from 'next/link';
 
 const Settings: React.FC<{}> = () => {
     const [isOpen, setIsOpen] = useState(false);
-
     const [deleteAccount] = useDeleteAccountMutation();
-
     const apolloClient = useApolloClient();
 
     return (
@@ -45,8 +43,8 @@ const Settings: React.FC<{}> = () => {
 
                 <ConfirmModal 
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
                     body = 'Are you sure you want to delete your account?'
+                    onClose={() => setIsOpen(false)}
                     onClick={async () => {
                         await deleteAccount();
                         await apolloClient.resetStore();

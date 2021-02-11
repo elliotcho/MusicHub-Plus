@@ -1,11 +1,12 @@
 import gql from 'graphql-tag';
-import { DislikeSongMutation, LikeSongMutation } from "../generated/graphql";
 import { ApolloCache } from "@apollo/client";
+import { DislikeSongMutation, LikeSongMutation } from "../generated/graphql";
 
 export const updateAfterLike = (
     cache: ApolloCache<LikeSongMutation >,
     songId: number
  ) => {
+
    const data = cache.readFragment<{
      id: number
      ratingStatus: number | null;
@@ -57,6 +58,7 @@ export const updateAfterLike = (
            ratingStatus: newStatus 
          }
       });
+   
    }
  }
 
@@ -64,6 +66,7 @@ export const updateAfterLike = (
    cache: ApolloCache<DislikeSongMutation >,
    songId: number
  ) => {
+
     const data = cache.readFragment<{
        id: number
        ratingStatus: number | null;
@@ -115,5 +118,6 @@ export const updateAfterLike = (
            ratingStatus: newStatus 
          }
        });
+       
      }
    }

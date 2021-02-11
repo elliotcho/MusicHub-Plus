@@ -10,6 +10,5 @@ export const mapTrackProps = (song: any) => {
     }
 
     delete props.user;
-
     return props;
 }

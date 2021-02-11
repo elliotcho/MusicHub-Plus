@@ -11,18 +11,12 @@ import {
 
 interface ConfirmModalProps {
     isOpen: boolean;
+    body: string;
     onClose() : void;
     onClick() : void;
-    body: string;
 }
 
-const ConfirmModal : React.FC<ConfirmModalProps> = ({ 
-    isOpen, 
-    onClose, 
-    onClick, 
-    body 
-}) => {
-    
+const ConfirmModal : React.FC<ConfirmModalProps> = ({ isOpen, body, onClose, onClick }) => {
     const cancelRef = useRef();    
     const focusStyle = { outline: 'none' };
 
@@ -51,8 +45,8 @@ const ConfirmModal : React.FC<ConfirmModalProps> = ({
                         <AlertDialogFooter>
                             <Button 
                                 ref={cancelRef} 
-                                onClick={onClose} 
                                 _focus={focusStyle}
+                                onClick={onClose} 
                             >
                                 Cancel
                             </Button>

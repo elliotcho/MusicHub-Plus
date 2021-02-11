@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { withApollo } from '../utils/withApollo';
-import ConcertWrapper from '../components/ConcertWrapper';
+import { Box, Button, Heading, Stack } from '@chakra-ui/react';
 import { useDeleteSongMutation, useUserSongsQuery } from '../generated/graphql';
+import { withApollo } from '../utils/withApollo';
 import { mapTrackProps } from '../utils/mapTrackProps';
 import { handlePlayEvent } from '../utils/handlePlayEvent';
-import { Box, Button, Heading, Stack } from '@chakra-ui/react';
+import ConcertWrapper from '../components/ConcertWrapper';
 import Track from '../components/Track';
 import ConfirmModal from '../components/ConfirmModal';
 import AuthWrapper from '../components/AuthWrapper';
@@ -60,35 +60,35 @@ const MyMusic: React.FC<{}> = () => {
                     )}
 
                     <Box mb={8}> 
-                    {data!.userSongs.hasMore && (
-                        <Button 
-                            isLoading={loading} 
-                            _focus={{ outline: 'none' }}
-                            onClick = {async () => {
-                                const cursor = data.userSongs.songs[data.userSongs.songs.length - 1].createdAt;
-                                const limit = variables?.limit;
+                        {data!.userSongs.hasMore && (
+                            <Button 
+                                isLoading={loading} 
+                                _focus={{ outline: 'none' }}
+                                onClick = {async () => {
+                                    const cursor = data.userSongs.songs[data.userSongs.songs.length - 1].createdAt;
+                                    const limit = variables?.limit;
 
-                                await fetchMore({
-                                    variables: { cursor, limit }
-                                });
-                            }}
-                        >
-                        Load More
-                        </Button>
-                    )}
+                                    await fetchMore({
+                                        variables: { cursor, limit }
+                                    });
+                                }}
+                            >
+                                Load More
+                            </Button>
+                        )}
                     </Box>
 
                 </Stack>
 
                 <ConfirmModal 
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
                     body = 'Are you sure you want to delete this song?'
+                    onClose={() => setIsOpen(false)}
                     onClick={async () => {
                         await deleteSong({
                             variables: { id: songId },
                             update: (cache) => {
-                            cache.evict({ id: 'Song:' + songId });
+                                cache.evict({ id: 'Song:' + songId });
                             }
                         });
                     }}

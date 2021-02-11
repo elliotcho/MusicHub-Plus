@@ -16,10 +16,10 @@ const ChangeEmailForm: React.FC<{}> = () => {
                         variables: { newEmail }
                     });
 
-                    if(response.data.changeEmail.user) {
-                        setValues({ newEmail: '' });
-                    } else {
+                    if(!response.data.changeEmail.user) {
                         setErrors(toErrorMap(response.data.changeEmail.errors));
+                    } else {
+                        setValues({ newEmail: '' });
                     }
                 }}
             >

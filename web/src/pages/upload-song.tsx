@@ -5,13 +5,13 @@ import { withApollo } from '../utils/withApollo';
 import { useUploadSongMutation } from '../generated/graphql';
 import ConcertWrapper from '../components/ConcertWrapper';
 import AuthWrapper from '../components/AuthWrapper';
-import 'react-dropzone-uploader/dist/styles.css'
+import 'react-dropzone-uploader/dist/styles.css';
 
 const UploadSong: React.FC<{}> = () => {
     const toast = useToast();
 
-    const [isLoading, setIsLoading] = useState(false);
     const [file, setFile] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [title, setTitle] = useState('');
 
     const [upload] = useUploadSongMutation();
@@ -30,7 +30,7 @@ const UploadSong: React.FC<{}> = () => {
                     <Box background='white' my={3}>
                         <Dropzone
                             maxFiles={1}
-                            styles={{ dropzone: { minHeight: 200, maxHeight: 250 }}}
+                            styles={{ dropzone: { minHeight: 200, maxHeight: 250 } }}
                             onChangeStatus={({ file }, status) => {
                                 if(status !== 'removed') {
                                     setFile(file);
@@ -71,9 +71,9 @@ const UploadSong: React.FC<{}> = () => {
                             }
 
                             setIsLoading(true);
-                            
-                            await upload({ variables: { file, title } });
 
+                            await upload({ variables: { file, title } });
+                            
                             window.location.reload();
 
                         }}

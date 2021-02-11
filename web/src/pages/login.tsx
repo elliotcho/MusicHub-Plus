@@ -1,13 +1,13 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
-import { toErrorMap } from '../utils/toErrorMap';
-import { withApollo } from '../utils/withApollo';
 import { Box, Button, Heading, Input, Link } from '@chakra-ui/react';
 import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
+import { toErrorMap } from '../utils/toErrorMap';
+import { withApollo } from '../utils/withApollo';
 import ConcertWrapper from '../components/ConcertWrapper';
 import AuthWrapper from '../components/AuthWrapper';
+import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 
 const Login: React.FC<{}> = ({}) => {
     const router = useRouter();
@@ -32,15 +32,16 @@ const Login: React.FC<{}> = ({}) => {
                             }
                         });
 
-                        if(response.data.login.user){
-                            router.push('/');
-                        } else {
+                        if(!response.data.login.user){
                             setErrors(toErrorMap(response.data.login.errors));
+                        } else {
+                            router.push('/');
                         }
                     }}
                 >
                     {({ values, isSubmitting, handleChange, errors }) => (
                         <Box mx='auto' width={400}>
+                            
                             <Heading color='white' mb={3}>
                                 Sign In
                             </Heading>  
@@ -81,7 +82,11 @@ const Login: React.FC<{}> = ({}) => {
                                     </Box>
                                 )}
 
-                                <Button type='submit' mt={4} isLoading={isSubmitting}>
+                                <Button 
+                                    type='submit' 
+                                    isLoading={isSubmitting}
+                                    mt={4}
+                                >
                                     Login
                                 </Button>
 
@@ -93,6 +98,7 @@ const Login: React.FC<{}> = ({}) => {
                                     </NextLink>
                                 </Box>
                             </Form>
+                            
                         </Box>
                     )}
                 </Formik>      
@@ -101,4 +107,4 @@ const Login: React.FC<{}> = ({}) => {
     );
 }
 
-export default withApollo({ssr: false})(Login);
+export default withApollo({ ssr: false })(Login);
