@@ -7,6 +7,7 @@ import {
     useMeQuery
 } from '../generated/graphql';
 import { updateAfterLike, updateAfterDisike } from '../utils/updateAfterRating';
+import { formatCount } from '../utils/formatCount';
 import { isServer } from '../utils/isServer';
 
 interface TrackProps {
@@ -111,7 +112,7 @@ const Track: React.FC<TrackProps> = ({
                     }}
                  />
 
-                 {likes}
+                 {formatCount(likes)}
 
                  <IconButton
                     mx = {4}
@@ -141,7 +142,7 @@ const Track: React.FC<TrackProps> = ({
                     }}
                  />
 
-                 {dislikes}
+                 {formatCount(dislikes)}
             </Box>
 
         </Box>

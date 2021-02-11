@@ -266,7 +266,7 @@ export class SongResolver{
       for(let i=0;i<songs.length;i++){
          const song = songs[i];
             
-         const url = `http://localhost:4000/songs/${song.name}`;
+         const url = `${process.env.SERVER_URL}/songs/${song.name}`;
          song.url = url;
       }
 
@@ -305,7 +305,7 @@ export class SongResolver{
       for(let i=0;i<songs.length;i++){
          const song = songs[i];
             
-         const url = `http://localhost:4000/songs/${song.name}`;
+         const url = `${process.env.SERVER_URL}/songs/${song.name}`;
          song.url = url;
       }
 
@@ -334,7 +334,7 @@ export class SongResolver{
       for(let i=0;i<songs.length;i++){
          const song = songs[i];
             
-         const url = `http://localhost:4000/songs/${song.name}`;
+         const url = `${process.env.SERVER_URL}/songs/${song.name}`;
          song.url = url;
       }
 
